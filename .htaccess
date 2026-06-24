@@ -1,0 +1,42 @@
+# Security headers
+<IfModule mod_headers.c>
+    Header set X-Content-Type-Options "nosniff"
+    Header set X-Frame-Options "SAMEORIGIN"
+    Header set X-XSS-Protection "1; mode=block"
+    Header set Referrer-Policy "strict-origin-when-cross-origin"
+</IfModule>
+
+# Prevent directory listing
+Options -Indexes
+
+# Protect sensitive files
+<FilesMatch "(^\.env|^config\.php|\.sql|\.log)$">
+    Order Allow,Deny
+    Deny from all
+</FilesMatch>
+
+# Protect directories
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # Block access to config directory
+    RewriteRule ^config/ - [F,L]
+
+    # Block access to includes directory
+    RewriteRule ^includes/ - [F,L]
+
+    # Block access to sql directory
+    RewriteRule ^sql/ - [F,L]
+
+    # Block access to logs directory
+    RewriteRule ^logs/ - [F,L]
+</IfModule>
+
+# PHP settings
+<IfModule mod_php.c>
+    php_value upload_max_filesize 5M
+    php_value post_max_size 8M
+    php_value max_execution_time 30
+    php_value session.cookie_httponly 1
+    php_value session.use_strict_mode 1
+</IfModule>

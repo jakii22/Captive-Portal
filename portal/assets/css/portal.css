@@ -1,0 +1,665 @@
+/* ============================================
+   Captive Portal - Premium Mobile-First Design
+   Dark Glassmorphism Theme
+   ============================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+/* ── CSS Variables ── */
+:root {
+    --bg-primary: #0a0a1a;
+    --bg-secondary: #111128;
+    --bg-card: rgba(255, 255, 255, 0.05);
+    --bg-card-hover: rgba(255, 255, 255, 0.08);
+    --glass-border: rgba(255, 255, 255, 0.1);
+    --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+
+    --text-primary: #f0f0f5;
+    --text-secondary: #a0a0b8;
+    --text-muted: #6a6a80;
+
+    --accent-violet: #7c3aed;
+    --accent-violet-glow: rgba(124, 58, 237, 0.4);
+    --accent-cyan: #06b6d4;
+    --accent-cyan-glow: rgba(6, 182, 212, 0.3);
+    --accent-green: #10b981;
+    --accent-rose: #f43f5e;
+
+    --google-red: #ea4335;
+    --google-blue: #4285f4;
+    --facebook-blue: #1877f2;
+    --free-green: #10b981;
+
+    --radius-sm: 8px;
+    --radius-md: 12px;
+    --radius-lg: 20px;
+    --radius-xl: 28px;
+
+    --transition-fast: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-smooth: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-bounce: 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* ── Reset & Base ── */
+*, *::before, *::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    font-size: 16px;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    min-height: 100vh;
+    overflow-x: hidden;
+    position: relative;
+}
+
+/* ── Animated Background ── */
+.portal-bg {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    overflow: hidden;
+}
+
+.portal-bg::before {
+    content: '';
+    position: absolute;
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, var(--accent-violet-glow) 0%, transparent 70%);
+    top: -200px;
+    left: -100px;
+    animation: floatOrb1 15s ease-in-out infinite;
+}
+
+.portal-bg::after {
+    content: '';
+    position: absolute;
+    width: 500px;
+    height: 500px;
+    background: radial-gradient(circle, var(--accent-cyan-glow) 0%, transparent 70%);
+    bottom: -150px;
+    right: -100px;
+    animation: floatOrb2 18s ease-in-out infinite;
+}
+
+@keyframes floatOrb1 {
+    0%, 100% { transform: translate(0, 0) scale(1); }
+    33% { transform: translate(80px, 60px) scale(1.1); }
+    66% { transform: translate(-40px, 120px) scale(0.95); }
+}
+
+@keyframes floatOrb2 {
+    0%, 100% { transform: translate(0, 0) scale(1); }
+    33% { transform: translate(-60px, -80px) scale(1.15); }
+    66% { transform: translate(100px, -40px) scale(0.9); }
+}
+
+/* ── Particle Grid ── */
+.particle-grid {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    background-image: 
+        radial-gradient(circle at 1px 1px, rgba(255,255,255,0.03) 1px, transparent 0);
+    background-size: 40px 40px;
+}
+
+/* ── Main Container ── */
+.portal-container {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 20px;
+}
+
+/* ── Logo / Brand Section ── */
+.portal-brand {
+    text-align: center;
+    margin-bottom: 32px;
+    animation: fadeInUp 0.8s ease-out;
+}
+
+.portal-logo {
+    width: 80px;
+    height: 80px;
+    background: linear-gradient(135deg, var(--accent-violet), var(--accent-cyan));
+    border-radius: var(--radius-lg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 16px;
+    box-shadow: 0 0 40px var(--accent-violet-glow);
+    position: relative;
+    overflow: hidden;
+}
+
+.portal-logo::after {
+    content: '';
+    position: absolute;
+    inset: 2px;
+    background: var(--bg-primary);
+    border-radius: calc(var(--radius-lg) - 2px);
+    z-index: 0;
+}
+
+.portal-logo svg {
+    width: 40px;
+    height: 40px;
+    position: relative;
+    z-index: 1;
+    fill: none;
+    stroke: var(--accent-cyan);
+    stroke-width: 2;
+}
+
+.portal-brand h1 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    background: linear-gradient(135deg, var(--text-primary), var(--accent-cyan));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    letter-spacing: -0.02em;
+}
+
+.portal-brand p {
+    color: var(--text-secondary);
+    font-size: 0.875rem;
+    margin-top: 4px;
+    font-weight: 400;
+}
+
+/* ── Login Card ── */
+.login-card {
+    background: var(--bg-card);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-xl);
+    padding: 32px 24px;
+    width: 100%;
+    max-width: 400px;
+    box-shadow: var(--glass-shadow);
+    animation: fadeInUp 0.8s ease-out 0.2s both;
+}
+
+.login-card-title {
+    text-align: center;
+    font-size: 1.125rem;
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: var(--text-primary);
+}
+
+.login-card-subtitle {
+    text-align: center;
+    font-size: 0.8125rem;
+    color: var(--text-muted);
+    margin-bottom: 28px;
+}
+
+/* ── Login Buttons ── */
+.login-methods {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.login-btn {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 20px;
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-md);
+    background: var(--bg-card);
+    color: var(--text-primary);
+    font-family: 'Inter', sans-serif;
+    font-size: 0.9375rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all var(--transition-smooth);
+    text-decoration: none;
+    position: relative;
+    overflow: hidden;
+}
+
+.login-btn::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, transparent, rgba(255,255,255,0.03));
+    opacity: 0;
+    transition: opacity var(--transition-fast);
+}
+
+.login-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+}
+
+.login-btn:hover::before {
+    opacity: 1;
+}
+
+.login-btn:active {
+    transform: translateY(0);
+}
+
+/* Button icon container */
+.login-btn-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: var(--radius-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: transform var(--transition-bounce);
+}
+
+.login-btn:hover .login-btn-icon {
+    transform: scale(1.1);
+}
+
+.login-btn-icon svg {
+    width: 20px;
+    height: 20px;
+}
+
+/* Google button */
+.login-btn--google {
+    border-color: rgba(234, 67, 53, 0.2);
+}
+.login-btn--google:hover {
+    border-color: rgba(234, 67, 53, 0.4);
+    background: rgba(234, 67, 53, 0.08);
+}
+.login-btn--google .login-btn-icon {
+    background: rgba(234, 67, 53, 0.15);
+}
+
+/* Facebook button */
+.login-btn--facebook {
+    border-color: rgba(24, 119, 242, 0.2);
+}
+.login-btn--facebook:hover {
+    border-color: rgba(24, 119, 242, 0.4);
+    background: rgba(24, 119, 242, 0.08);
+}
+.login-btn--facebook .login-btn-icon {
+    background: rgba(24, 119, 242, 0.15);
+}
+
+/* Free button */
+.login-btn--free {
+    border-color: rgba(16, 185, 129, 0.2);
+}
+.login-btn--free:hover {
+    border-color: rgba(16, 185, 129, 0.4);
+    background: rgba(16, 185, 129, 0.08);
+}
+.login-btn--free .login-btn-icon {
+    background: rgba(16, 185, 129, 0.15);
+}
+
+/* Button text container */
+.login-btn-text {
+    display: flex;
+    flex-direction: column;
+}
+
+.login-btn-text span:first-child {
+    font-weight: 500;
+    line-height: 1.3;
+}
+
+.login-btn-text span:last-child {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    font-weight: 400;
+}
+
+/* Divider */
+.login-divider {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 20px 0;
+    color: var(--text-muted);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+}
+
+.login-divider::before,
+.login-divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--glass-border);
+}
+
+/* ── Footer ── */
+.portal-footer {
+    text-align: center;
+    margin-top: 24px;
+    animation: fadeInUp 0.8s ease-out 0.4s both;
+}
+
+.portal-footer p {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    line-height: 1.6;
+}
+
+.portal-footer a {
+    color: var(--accent-cyan);
+    text-decoration: none;
+    transition: color var(--transition-fast);
+}
+
+.portal-footer a:hover {
+    color: var(--accent-violet);
+}
+
+/* ── Success Page ── */
+.success-container {
+    text-align: center;
+    max-width: 500px;
+}
+
+.success-icon {
+    width: 100px;
+    height: 100px;
+    background: linear-gradient(135deg, var(--accent-green), var(--accent-cyan));
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 24px;
+    animation: successPulse 2s ease-in-out infinite;
+    box-shadow: 0 0 60px rgba(16, 185, 129, 0.3);
+}
+
+.success-icon svg {
+    width: 48px;
+    height: 48px;
+    fill: none;
+    stroke: white;
+    stroke-width: 3;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    animation: checkDraw 0.6s ease-out 0.3s both;
+}
+
+@keyframes successPulse {
+    0%, 100% { box-shadow: 0 0 30px rgba(16, 185, 129, 0.3); }
+    50% { box-shadow: 0 0 60px rgba(16, 185, 129, 0.5); }
+}
+
+@keyframes checkDraw {
+    from { stroke-dasharray: 100; stroke-dashoffset: 100; }
+    to { stroke-dasharray: 100; stroke-dashoffset: 0; }
+}
+
+.success-title {
+    font-size: 1.75rem;
+    font-weight: 700;
+    margin-bottom: 8px;
+    background: linear-gradient(135deg, var(--accent-green), var(--accent-cyan));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.success-subtitle {
+    font-size: 0.9375rem;
+    color: var(--text-secondary);
+    margin-bottom: 32px;
+    line-height: 1.6;
+}
+
+/* ── Ad Banner Carousel ── */
+.ad-carousel {
+    width: 100%;
+    max-width: 400px;
+    margin: 0 auto 24px;
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    border: 1px solid var(--glass-border);
+    background: var(--bg-card);
+    position: relative;
+}
+
+.ad-carousel-inner {
+    display: flex;
+    transition: transform 0.5s ease-in-out;
+}
+
+.ad-slide {
+    min-width: 100%;
+    position: relative;
+}
+
+.ad-slide img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    display: block;
+}
+
+.ad-slide-link {
+    display: block;
+    text-decoration: none;
+    color: inherit;
+}
+
+.ad-dots {
+    display: flex;
+    justify-content: center;
+    gap: 6px;
+    padding: 10px;
+}
+
+.ad-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--text-muted);
+    border: none;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    padding: 0;
+}
+
+.ad-dot.active {
+    background: var(--accent-cyan);
+    width: 20px;
+    border-radius: 3px;
+}
+
+/* ── Session Timer ── */
+.session-timer {
+    background: var(--bg-card);
+    backdrop-filter: blur(20px);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-md);
+    padding: 16px 24px;
+    margin-bottom: 24px;
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.session-timer-icon {
+    color: var(--accent-cyan);
+}
+
+.session-timer-text {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+}
+
+.session-timer-value {
+    font-weight: 700;
+    font-size: 1.125rem;
+    color: var(--accent-cyan);
+    font-variant-numeric: tabular-nums;
+}
+
+/* ── Error Page ── */
+.error-card {
+    text-align: center;
+}
+
+.error-icon {
+    width: 80px;
+    height: 80px;
+    background: rgba(244, 63, 94, 0.15);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 20px;
+}
+
+.error-icon svg {
+    width: 40px;
+    height: 40px;
+    stroke: var(--accent-rose);
+    fill: none;
+    stroke-width: 2;
+}
+
+.error-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--accent-rose);
+    margin-bottom: 8px;
+}
+
+.error-message {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    margin-bottom: 24px;
+    line-height: 1.6;
+}
+
+.btn-retry {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 28px;
+    background: linear-gradient(135deg, var(--accent-violet), var(--accent-cyan));
+    color: white;
+    border: none;
+    border-radius: var(--radius-md);
+    font-family: 'Inter', sans-serif;
+    font-size: 0.875rem;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all var(--transition-smooth);
+}
+
+.btn-retry:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px var(--accent-violet-glow);
+}
+
+/* ── Loading Spinner ── */
+.loading-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(10, 10, 26, 0.9);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+    opacity: 0;
+    visibility: hidden;
+    transition: all var(--transition-smooth);
+}
+
+.loading-overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+.loading-spinner {
+    width: 48px;
+    height: 48px;
+    border: 3px solid var(--glass-border);
+    border-top-color: var(--accent-cyan);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    margin-bottom: 16px;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+.loading-text {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+}
+
+/* ── Animations ── */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+/* ── Responsive ── */
+@media (max-width: 480px) {
+    .login-card {
+        padding: 24px 16px;
+        border-radius: var(--radius-lg);
+    }
+
+    .portal-brand h1 {
+        font-size: 1.25rem;
+    }
+
+    .login-btn {
+        padding: 12px 16px;
+    }
+}
+
+@media (min-width: 768px) {
+    .login-card {
+        padding: 40px 36px;
+    }
+
+    .portal-brand h1 {
+        font-size: 1.75rem;
+    }
+}
