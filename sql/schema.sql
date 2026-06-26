@@ -18,9 +18,10 @@ CREATE TABLE IF NOT EXISTS accounts (
 );
 
 -- Default admin account (password: admin123 - CHANGE IMMEDIATELY)
+-- NOTE: Hash akan di-regenerate oleh setup.sh saat deployment
 INSERT INTO accounts (username, password, role) VALUES (
     'admin',
-    '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', -- bcrypt of 'admin123'
+    'PLACEHOLDER_WILL_BE_REPLACED_BY_SETUP',
     'full'
 ) ON CONFLICT (username) DO NOTHING;
 

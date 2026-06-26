@@ -199,7 +199,13 @@ sudo -u postgres psql -d "$DB_NAME" -f "$INSTALL_DIR/sql/schema.sql"
 sudo -u postgres psql -d "$DB_NAME" -c "GRANT ALL ON ALL TABLES IN SCHEMA public TO $DB_USER;"
 sudo -u postgres psql -d "$DB_NAME" -c "GRANT ALL ON ALL SEQUENCES IN SCHEMA public TO $DB_USER;"
 
+# Generate correct bcrypt hash untuk admin password dan update database
+echo "Generating admin password hash..."
+ADMIN_HASH=$(php -r "echo password_hash('admin123', PASSWORD_BCRYPT);")
+sudo -u postgres psql -d "$DB_NAME" -c "UPDATE accounts SET password = '$ADMIN_HASH' WHERE username = 'admin';"
+
 print_success "Database schema imported"
+print_success "Default admin: admin / admin123 (SEGERA GANTI!)"
 
 # ============================================================
 # STEP 6: Configure Application
