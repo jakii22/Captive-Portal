@@ -159,7 +159,7 @@ sed -i 's/scram-sha-256/md5/g' /etc/postgresql/*/main/pg_hba.conf
 systemctl restart postgresql
 
 # Re-set password agar di-hash ulang sebagai md5
-sudo -u postgres psql -c "ALTER USER \"$DB_USER\" WITH PASSWORD '$DB_PASS';"
+sudo -u postgres psql -c "ALTER USER $DB_USER WITH PASSWORD '$DB_PASS';"
 
 print_success "PostgreSQL auth method set to md5 (FreeRADIUS compatible)"
 
