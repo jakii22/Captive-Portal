@@ -440,6 +440,15 @@ if [ -f "$RADIUS_DEFAULT" ]; then
     print_success "FreeRADIUS default site updated"
 fi
 
+# Add MikroTik client
+RADIUS_CLIENTS="/etc/freeradius/3.0/clients.conf"
+if [ -f "$RADIUS_CLIENTS" ]; then
+    if ! grep -q "mikrotik_hotspot" "$RADIUS_CLIENTS"; then
+        echo -e "\nclient mikrotik_hotspot {\n    ipaddr = 0.0.0.0/0\n    secret = $FREERADIUS_SECRET\n}" >> "$RADIUS_CLIENTS"
+        print_success "MikroTik added to RADIUS clients"
+    fi
+fi
+
 # Restart FreeRADIUS
 systemctl enable freeradius
 systemctl restart freeradius
