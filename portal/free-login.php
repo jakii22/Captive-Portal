@@ -84,3 +84,4 @@ try {
     header('Location: ' . PORTAL_URL . '/index.php?error=1');
     exit;
 }
+

@@ -274,3 +274,4 @@ function redirectWithError(string $message): void
     header('Location: ' . PORTAL_URL . '/index.php?error=1');
     exit;
 }
+

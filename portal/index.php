@@ -58,10 +58,14 @@ $siteName = getSetting('site_name', APP_NAME);
     <meta name="description" content="<?= sanitizeInput($siteName) ?> - Pilih metode login untuk terhubung ke internet">
     <meta name="robots" content="noindex, nofollow">
     <title><?= sanitizeInput($siteName) ?> - Login</title>
-    <link rel="stylesheet" href="assets/css/portal.css">
+    <link rel="stylesheet" href="assets/css/portal.css?v=1.1">
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><circle cx='12' cy='12' r='10' fill='%237c3aed'/></svg>">
 </head>
 <body>
+    <!-- Theme Toggle -->
+    <button id="themeToggle" class="portal-theme-toggle" aria-label="Toggle Theme">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+    </button>
     <!-- Animated Background -->
     <div class="portal-bg"></div>
     <div class="particle-grid"></div>
@@ -153,6 +157,7 @@ $siteName = getSetting('site_name', APP_NAME);
         </div>
     </div>
 
-    <script src="assets/js/portal.js"></script>
+    <script src="assets/js/portal.js?v=1.1"></script>
 </body>
 </html>
+
