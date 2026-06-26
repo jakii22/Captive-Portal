@@ -152,6 +152,17 @@ fi
 # Grant privileges
 sudo -u postgres psql -c "GRANT ALL PRIVILEGES ON DATABASE $DB_NAME TO $DB_USER;"
 
+# Fix: FreeRADIUS 3.0 tidak support scram-sha-256, ubah ke md5
+echo "Configuring PostgreSQL authentication for FreeRADIUS compatibility..."
+sudo -u postgres psql -c "ALTER SYSTEM SET password_encryption = 'md5';"
+sed -i 's/scram-sha-256/md5/g' /etc/postgresql/*/main/pg_hba.conf
+systemctl restart postgresql
+
+# Re-set password agar di-hash ulang sebagai md5
+sudo -u postgres psql -c "ALTER USER \"$DB_USER\" WITH PASSWORD '$DB_PASS';"
+
+print_success "PostgreSQL auth method set to md5 (FreeRADIUS compatible)"
+
 # ============================================================
 # STEP 5: Deploy Application Files
 # ============================================================
@@ -393,7 +404,7 @@ sql {
     acct_table2 = "radacct"
     authcheck_table = "radcheck"
 
-    read_clients = yes
+    read_clients = no
 
     pool {
         start = 5
