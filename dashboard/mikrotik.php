@@ -93,7 +93,7 @@ $pageTitle = 'MikroTik API';
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="robots" content="noindex, nofollow">
     <title><?= $pageTitle ?> - Admin Panel</title>
-    <link rel="stylesheet" href="assets/css/dashboard.css">
+    <link rel="stylesheet" href="assets/css/dashboard.css?v=1.1">
 </head>
 <body>
 <div class="dashboard-layout">
@@ -279,6 +279,6 @@ $pageTitle = 'MikroTik API';
     </div>
 </div>
 
-<script src="assets/js/dashboard.js"></script>
+<script src="assets/js/dashboard.js?v=1.1"></script>
 </body>
 </html>

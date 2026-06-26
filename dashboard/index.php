@@ -103,7 +103,7 @@ $pageTitle = 'Dashboard';
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="robots" content="noindex, nofollow">
     <title><?= $pageTitle ?> - Admin Panel</title>
-    <link rel="stylesheet" href="assets/css/dashboard.css">
+    <link rel="stylesheet" href="assets/css/dashboard.css?v=1.1">
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js"></script>
 </head>
 <body>
@@ -299,7 +299,7 @@ $pageTitle = 'Dashboard';
     </div>
 </div>
 
-<script src="assets/js/dashboard.js"></script>
+<script src="assets/js/dashboard.js?v=1.1"></script>
 <script>
 // Users Chart (Bar)
 const usersCtx = document.getElementById('usersChart')?.getContext('2d');
