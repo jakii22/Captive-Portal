@@ -177,13 +177,37 @@ function buildMikrotikLoginUrl(string $username, string $password): string
     ]);
 }
 
-/**
- * Redirect to MikroTik hotspot login
- */
 function redirectToMikrotik(string $username, string $password): void
 {
-    $url = buildMikrotikLoginUrl($username, $password);
-    header('Location: ' . $url);
+    $hotspotUrl = getSetting('hotspot_login_url', 'http://hotspot.local/login');
+    $dst = $_SESSION['link_orig'] ?? '';
+    
+    // Use HTML form auto-submit instead of PHP header redirect
+    // This bypasses strict Mixed Content (HTTPS -> HTTP) blocks in modern browsers
+    echo '<!DOCTYPE html>
+<html>
+<head>
+    <title>Connecting...</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>body { font-family: sans-serif; text-align: center; margin-top: 50px; }</style>
+</head>
+<body>
+    <h3>Menghubungkan ke Internet...</h3>
+    <p>Silakan tunggu beberapa saat.</p>
+    <form id="loginForm" method="post" action="' . htmlspecialchars($hotspotUrl) . '">
+        <input type="hidden" name="username" value="' . htmlspecialchars($username) . '">
+        <input type="hidden" name="password" value="' . htmlspecialchars($password) . '">';
+    
+    if (!empty($dst)) {
+        echo '<input type="hidden" name="dst" value="' . htmlspecialchars($dst) . '">';
+    }
+        
+    echo '</form>
+    <script>
+        document.getElementById("loginForm").submit();
+    </script>
+</body>
+</html>';
     exit;
 }
 
