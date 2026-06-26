@@ -11,6 +11,15 @@ ini_set('session.cookie_httponly', '1');
 ini_set('session.use_strict_mode', '1');
 ini_set('session.cookie_samesite', 'Lax');
 
+// Detect HTTPS
+$isHttps = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off')
+        || (!empty($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https')
+        || (!empty($_SERVER['SERVER_PORT']) && $_SERVER['SERVER_PORT'] == 443);
+
+if ($isHttps) {
+    ini_set('session.cookie_secure', '1');
+}
+
 // Error reporting (set to 0 in production)
 error_reporting(E_ALL);
 ini_set('display_errors', '0');
@@ -20,7 +29,9 @@ ini_set('error_log', __DIR__ . '/../logs/error.log');
 // Application settings
 define('APP_NAME', 'Captive Portal Hotspot');
 define('APP_VERSION', '1.0.0');
-define('BASE_URL', 'http://' . ($_SERVER['HTTP_HOST'] ?? 'localhost'));
+define('SITE_DOMAIN', 'portal.fanns.my.id');
+$protocol = $isHttps ? 'https' : 'http';
+define('BASE_URL', $protocol . '://' . ($_SERVER['HTTP_HOST'] ?? SITE_DOMAIN));
 define('PORTAL_URL', BASE_URL . '/portal');
 define('DASHBOARD_URL', BASE_URL . '/dashboard');
 
