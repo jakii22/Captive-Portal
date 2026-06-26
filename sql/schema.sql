@@ -102,6 +102,49 @@ CREATE INDEX IF NOT EXISTS idx_radacct_calledstationid ON radacct(calledstationi
 CREATE INDEX IF NOT EXISTS idx_radacct_callingstationid ON radacct(callingstationid);
 
 -- ============================================================
+-- 4a. FREERADIUS AUXILIARY TABLES
+-- Required by default queries.conf to prevent rlm_sql crash
+-- ============================================================
+CREATE TABLE IF NOT EXISTS radreply (
+    id SERIAL PRIMARY KEY,
+    username VARCHAR(64) NOT NULL DEFAULT '',
+    attribute VARCHAR(64) NOT NULL DEFAULT '',
+    op VARCHAR(2) NOT NULL DEFAULT '=',
+    value VARCHAR(253) NOT NULL DEFAULT ''
+);
+
+CREATE TABLE IF NOT EXISTS radgroupcheck (
+    id SERIAL PRIMARY KEY,
+    groupname VARCHAR(64) NOT NULL DEFAULT '',
+    attribute VARCHAR(64) NOT NULL DEFAULT '',
+    op VARCHAR(2) NOT NULL DEFAULT '==',
+    value VARCHAR(253) NOT NULL DEFAULT ''
+);
+
+CREATE TABLE IF NOT EXISTS radgroupreply (
+    id SERIAL PRIMARY KEY,
+    groupname VARCHAR(64) NOT NULL DEFAULT '',
+    attribute VARCHAR(64) NOT NULL DEFAULT '',
+    op VARCHAR(2) NOT NULL DEFAULT '=',
+    value VARCHAR(253) NOT NULL DEFAULT ''
+);
+
+CREATE TABLE IF NOT EXISTS radusergroup (
+    id SERIAL PRIMARY KEY,
+    username VARCHAR(64) NOT NULL DEFAULT '',
+    groupname VARCHAR(64) NOT NULL DEFAULT '',
+    priority INTEGER NOT NULL DEFAULT 1
+);
+
+CREATE TABLE IF NOT EXISTS radpostauth (
+    id SERIAL PRIMARY KEY,
+    username VARCHAR(64) NOT NULL DEFAULT '',
+    pass VARCHAR(64) NOT NULL DEFAULT '',
+    reply VARCHAR(32) NOT NULL DEFAULT '',
+    authdate TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+-- ============================================================
 -- 5. SETTINGS - Key-value config store
 -- ============================================================
 CREATE TABLE IF NOT EXISTS settings (
