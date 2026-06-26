@@ -96,7 +96,7 @@ CREATE INDEX IF NOT EXISTS idx_radacct_username ON radacct(username);
 CREATE INDEX IF NOT EXISTS idx_radacct_acctstarttime ON radacct(acctstarttime);
 CREATE INDEX IF NOT EXISTS idx_radacct_acctstoptime ON radacct(acctstoptime);
 CREATE INDEX IF NOT EXISTS idx_radacct_acctsessionid ON radacct(acctsessionid);
-CREATE INDEX IF NOT EXISTS idx_radacct_acctuniqueid ON radacct(acctuniqueid);
+CREATE UNIQUE INDEX IF NOT EXISTS idx_radacct_acctuniqueid ON radacct(acctuniqueid);
 CREATE INDEX IF NOT EXISTS idx_radacct_nasipaddress ON radacct(nasipaddress);
 CREATE INDEX IF NOT EXISTS idx_radacct_calledstationid ON radacct(calledstationid);
 CREATE INDEX IF NOT EXISTS idx_radacct_callingstationid ON radacct(callingstationid);
