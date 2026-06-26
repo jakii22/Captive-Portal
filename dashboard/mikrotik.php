@@ -10,6 +10,7 @@ require_once __DIR__ . '/../includes/functions.php';
 require_once __DIR__ . '/../includes/RouterOS/RouterosAPI.php';
 
 requireLogin();
+requireRole('full'); // Restrict to full admins only
 $admin = getCurrentAdmin();
 
 // Handle form submission (save MikroTik credentials)

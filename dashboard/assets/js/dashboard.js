@@ -3,12 +3,38 @@
  */
 
 document.addEventListener('DOMContentLoaded', () => {
+    initTheme();
     initSidebar();
     initModals();
     initAlerts();
     initFileUpload();
     initConfirmDialogs();
 });
+
+/* ── Theme Toggle ── */
+function initTheme() {
+    const themeToggle = document.getElementById('themeToggle');
+    if (!themeToggle) return;
+
+    // Cek localStorage, default light jika kosong
+    const currentTheme = localStorage.getItem('theme') || 'light';
+    if (currentTheme === 'dark') {
+        document.documentElement.setAttribute('data-theme', 'dark');
+    } else {
+        document.documentElement.removeAttribute('data-theme');
+    }
+
+    themeToggle.addEventListener('click', () => {
+        const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+        if (isDark) {
+            document.documentElement.removeAttribute('data-theme');
+            localStorage.setItem('theme', 'light');
+        } else {
+            document.documentElement.setAttribute('data-theme', 'dark');
+            localStorage.setItem('theme', 'dark');
+        }
+    });
+}
 
 /* ── Sidebar Toggle (Mobile) ── */
 function initSidebar() {

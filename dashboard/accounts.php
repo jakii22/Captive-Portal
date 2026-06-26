@@ -9,6 +9,7 @@ require_once __DIR__ . '/../includes/auth.php';
 require_once __DIR__ . '/../includes/functions.php';
 
 requireLogin();
+requireRole('full'); // Restrict to full admins only
 $admin = getCurrentAdmin();
 $flash = getFlash();
 
