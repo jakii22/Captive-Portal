@@ -16,6 +16,10 @@ echo -e "${CYAN}============================================================${NC
 # Cek apakah docker sudah terinstall
 if ! command -v docker &> /dev/null; then
     echo "Docker belum terinstall. Menginstal Docker..."
+    if ! command -v curl &> /dev/null; then
+        echo "Menginstal curl..."
+        apt install -y curl
+    fi
     curl -fsSL https://get.docker.com -o get-docker.sh
     sudo sh get-docker.sh
     rm get-docker.sh
