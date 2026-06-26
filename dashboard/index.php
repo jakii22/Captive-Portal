@@ -326,13 +326,13 @@ if (usersCtx) {
             },
             scales: {
                 x: {
-                    grid: { color: 'rgba(255,255,255,0.04)' },
-                    ticks: { color: '#5a5a70', font: { size: 11 } }
+                    grid: { color: 'rgba(128,128,128,0.15)' },
+                    ticks: { color: '#888', font: { size: 11 } }
                 },
                 y: {
                     beginAtZero: true,
-                    grid: { color: 'rgba(255,255,255,0.04)' },
-                    ticks: { color: '#5a5a70', font: { size: 11 }, stepSize: 1 }
+                    grid: { color: 'rgba(128,128,128,0.15)' },
+                    ticks: { color: '#888', font: { size: 11 }, stepSize: 1 }
                 }
             }
         }
@@ -353,9 +353,9 @@ if (methodCtx) {
                 data: methodData.length > 0 ? methodData : [1],
                 backgroundColor: methodData.length > 0
                     ? ['#06b6d4', '#7c3aed', '#10b981', '#f59e0b']
-                    : ['rgba(255,255,255,0.05)'],
-                borderColor: '#080816',
-                borderWidth: 3,
+                    : ['rgba(128,128,128,0.1)'],
+                borderColor: 'transparent',
+                borderWidth: 2,
             }]
         },
         options: {
@@ -365,7 +365,7 @@ if (methodCtx) {
             plugins: {
                 legend: {
                     position: 'bottom',
-                    labels: { color: '#a0a0b8', padding: 12, font: { size: 11 } }
+                    labels: { color: '#888', padding: 12, font: { size: 11 } }
                 }
             }
         }
