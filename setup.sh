@@ -435,8 +435,8 @@ fi
 # Enable SQL in default site
 RADIUS_DEFAULT="/etc/freeradius/3.0/sites-available/default"
 if [ -f "$RADIUS_DEFAULT" ]; then
-    # Uncomment sql in authorize and accounting sections
-    sed -i '/^#.*-sql$/s/^#//' "$RADIUS_DEFAULT" 2>/dev/null || true
+    # Uncomment sql in authorize and accounting sections (handles indentation)
+    sed -i 's/^[ \t]*#[ \t]*-sql/        -sql/' "$RADIUS_DEFAULT" 2>/dev/null || true
     print_success "FreeRADIUS default site updated"
 fi
 
