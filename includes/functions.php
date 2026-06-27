@@ -182,11 +182,18 @@ function redirectToMikrotik(string $username, string $password): void
     $hotspotUrl = getSetting('hotspot_login_url', 'http://hotspot.local/login');
     $successUrl = PORTAL_URL . '/success.php';
     
-    // Strategy: Use a hidden iframe to send credentials to MikroTik (background auth),
-    // while the main page redirects directly to our success.php.
-    // This avoids:
-    // 1. "Insecure form submission" browser warning (iframe is hidden)
-    // 2. MikroTik hijacking the redirect to its own status page
+    // Build MikroTik login URL with credentials and destination
+    // dst parameter tells MikroTik where to redirect after successful login
+    $loginUrl = $hotspotUrl . '?' . http_build_query([
+        'username' => $username,
+        'password' => $password,
+        'dst'      => $successUrl,
+    ]);
+    
+    // Direct redirect to MikroTik login URL.
+    // IMPORTANT: We MUST navigate the main window to MikroTik's login URL.
+    // Hidden iframe/fetch approaches fail due to mixed content (HTTPS portal → HTTP hotspot).
+    // MikroTik needs the main browser window to process authentication cookies.
     echo '<!DOCTYPE html>
 <html>
 <head>
@@ -202,23 +209,8 @@ function redirectToMikrotik(string $username, string $password): void
     <div class="spinner"></div>
     <h3>Menghubungkan ke Internet...</h3>
     <p>Silakan tunggu beberapa saat.</p>
-
-    <!-- Hidden iframe: sends login credentials to MikroTik in background -->
-    <iframe id="mikrotikFrame" name="mikrotikFrame" style="display:none;width:0;height:0;border:0;"></iframe>
-    <form id="loginForm" method="post" action="' . htmlspecialchars($hotspotUrl) . '" target="mikrotikFrame">
-        <input type="hidden" name="username" value="' . htmlspecialchars($username) . '">
-        <input type="hidden" name="password" value="' . htmlspecialchars($password) . '">
-        <input type="hidden" name="dst" value="' . htmlspecialchars($successUrl) . '">
-    </form>
-
     <script>
-        // Submit login to MikroTik via hidden iframe
-        document.getElementById("loginForm").submit();
-
-        // After a short delay (let MikroTik process the auth), redirect to our success page
-        setTimeout(function() {
-            window.location.replace("' . htmlspecialchars($successUrl) . '");
-        }, 2000);
+        window.location.replace("' . $loginUrl . '");
     </script>
 </body>
 </html>';
