@@ -180,10 +180,19 @@ function buildMikrotikLoginUrl(string $username, string $password): string
 function redirectToMikrotik(string $username, string $password): void
 {
     $hotspotUrl = getSetting('hotspot_login_url', 'http://hotspot.local/login');
-    $dst = $_SESSION['link_orig'] ?? '';
+    // Force destination to the success page in the portal folder
+    $dst = PORTAL_URL . '/success.php';
     
-    // Use HTML form auto-submit instead of PHP header redirect
-    // This bypasses strict Mixed Content (HTTPS -> HTTP) blocks in modern browsers
+    $query = http_build_query([
+        'username' => $username,
+        'password' => $password,
+        'dst'      => $dst
+    ]);
+    
+    $redirectUrl = $hotspotUrl . '?' . $query;
+    
+    // Use JavaScript navigation instead of form auto-submit.
+    // This bypasses the "Insecure form submission" warning in modern browsers.
     echo '<!DOCTYPE html>
 <html>
 <head>
@@ -194,17 +203,8 @@ function redirectToMikrotik(string $username, string $password): void
 <body>
     <h3>Menghubungkan ke Internet...</h3>
     <p>Silakan tunggu beberapa saat.</p>
-    <form id="loginForm" method="post" action="' . htmlspecialchars($hotspotUrl) . '">
-        <input type="hidden" name="username" value="' . htmlspecialchars($username) . '">
-        <input type="hidden" name="password" value="' . htmlspecialchars($password) . '">';
-    
-    if (!empty($dst)) {
-        echo '<input type="hidden" name="dst" value="' . htmlspecialchars($dst) . '">';
-    }
-        
-    echo '</form>
     <script>
-        document.getElementById("loginForm").submit();
+        window.location.replace("' . $redirectUrl . '");
     </script>
 </body>
 </html>';
