@@ -226,20 +226,52 @@ function redirectToMikrotik(string $username, string $password): void
 }
 
 /**
- * Check if a free session MAC address has exceeded the limit
+ * Get active free session for a MAC address (still within time limit)
+ * Returns session data if found, null if no active session
  */
-function isFreeSessionExpired(string $macAddress): bool
+function getActiveFreeSession(string $macAddress): ?array
 {
     try {
         $db = Database::getInstance();
         $limitSeconds = (int) getSetting('free_session_limit_seconds', (string) FREE_SESSION_LIMIT);
 
-        // Check if there's an active session within the limit period
+        $stmt = $db->prepare(
+            'SELECT * FROM free_session_log
+             WHERE mac_address = :mac
+             AND session_start > (CURRENT_TIMESTAMP - INTERVAL \'1 second\' * :limit)
+             AND is_expired = FALSE
+             ORDER BY session_start DESC
+             LIMIT 1'
+        );
+        $stmt->execute([
+            ':mac'   => $macAddress,
+            ':limit' => $limitSeconds,
+        ]);
+        $result = $stmt->fetch();
+
+        return $result ?: null;
+    } catch (PDOException $e) {
+        error_log('getActiveFreeSession error: ' . $e->getMessage());
+        return null;
+    }
+}
+
+/**
+ * Check if a MAC has used up its free session (session expired / past the time limit)
+ * Returns true only if there's a PAST session that has run out
+ */
+function hasFreeSessionUsedUp(string $macAddress): bool
+{
+    try {
+        $db = Database::getInstance();
+        $limitSeconds = (int) getSetting('free_session_limit_seconds', (string) FREE_SESSION_LIMIT);
+
+        // Check for sessions that started within the cooldown period but are marked expired
         $stmt = $db->prepare(
             'SELECT COUNT(*) as count FROM free_session_log
              WHERE mac_address = :mac
              AND session_start > (CURRENT_TIMESTAMP - INTERVAL \'1 second\' * :limit)
-             AND is_expired = FALSE'
+             AND is_expired = TRUE'
         );
         $stmt->execute([
             ':mac'   => $macAddress,
@@ -249,8 +281,25 @@ function isFreeSessionExpired(string $macAddress): bool
 
         return ($result['count'] ?? 0) > 0;
     } catch (PDOException $e) {
-        error_log('isFreeSessionExpired error: ' . $e->getMessage());
+        error_log('hasFreeSessionUsedUp error: ' . $e->getMessage());
         return false;
+    }
+}
+
+/**
+ * Get existing password from radcheck for a username
+ */
+function getRadcheckPassword(string $username): ?string
+{
+    try {
+        $db = Database::getInstance();
+        $stmt = $db->prepare("SELECT value FROM radcheck WHERE username = :username AND attribute = 'Cleartext-Password' LIMIT 1");
+        $stmt->execute([':username' => $username]);
+        $result = $stmt->fetch();
+        return $result ? $result['value'] : null;
+    } catch (PDOException $e) {
+        error_log('getRadcheckPassword error: ' . $e->getMessage());
+        return null;
     }
 }
 
