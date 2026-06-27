@@ -420,6 +420,9 @@ sql {
         lifetime = 0
         idle_timeout = 60
     }
+
+    # Load standard FreeRADIUS SQL queries
+    \$INCLUDE \${modconfdir}/\${.:name}/main/\${dialect}/queries.conf
 }
 EOF
 
