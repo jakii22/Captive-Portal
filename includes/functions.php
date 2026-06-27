@@ -180,31 +180,45 @@ function buildMikrotikLoginUrl(string $username, string $password): string
 function redirectToMikrotik(string $username, string $password): void
 {
     $hotspotUrl = getSetting('hotspot_login_url', 'http://hotspot.local/login');
-    // Force destination to the success page in the portal folder
-    $dst = PORTAL_URL . '/success.php';
+    $successUrl = PORTAL_URL . '/success.php';
     
-    $query = http_build_query([
-        'username' => $username,
-        'password' => $password,
-        'dst'      => $dst
-    ]);
-    
-    $redirectUrl = $hotspotUrl . '?' . $query;
-    
-    // Use JavaScript navigation instead of form auto-submit.
-    // This bypasses the "Insecure form submission" warning in modern browsers.
+    // Strategy: Use a hidden iframe to send credentials to MikroTik (background auth),
+    // while the main page redirects directly to our success.php.
+    // This avoids:
+    // 1. "Insecure form submission" browser warning (iframe is hidden)
+    // 2. MikroTik hijacking the redirect to its own status page
     echo '<!DOCTYPE html>
 <html>
 <head>
     <title>Connecting...</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <style>body { font-family: sans-serif; text-align: center; margin-top: 50px; }</style>
+    <style>
+        body { font-family: sans-serif; text-align: center; margin-top: 50px; background: #0f0f1a; color: #fff; }
+        .spinner { width: 40px; height: 40px; border: 4px solid rgba(124,58,237,0.3); border-top-color: #7c3aed; border-radius: 50%; animation: spin 0.8s linear infinite; margin: 20px auto; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+    </style>
 </head>
 <body>
+    <div class="spinner"></div>
     <h3>Menghubungkan ke Internet...</h3>
     <p>Silakan tunggu beberapa saat.</p>
+
+    <!-- Hidden iframe: sends login credentials to MikroTik in background -->
+    <iframe id="mikrotikFrame" name="mikrotikFrame" style="display:none;width:0;height:0;border:0;"></iframe>
+    <form id="loginForm" method="post" action="' . htmlspecialchars($hotspotUrl) . '" target="mikrotikFrame">
+        <input type="hidden" name="username" value="' . htmlspecialchars($username) . '">
+        <input type="hidden" name="password" value="' . htmlspecialchars($password) . '">
+        <input type="hidden" name="dst" value="' . htmlspecialchars($successUrl) . '">
+    </form>
+
     <script>
-        window.location.replace("' . $redirectUrl . '");
+        // Submit login to MikroTik via hidden iframe
+        document.getElementById("loginForm").submit();
+
+        // After a short delay (let MikroTik process the auth), redirect to our success page
+        setTimeout(function() {
+            window.location.replace("' . htmlspecialchars($successUrl) . '");
+        }, 2000);
     </script>
 </body>
 </html>';
