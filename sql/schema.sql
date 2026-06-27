@@ -82,14 +82,14 @@ CREATE TABLE IF NOT EXISTS radacct (
     acctoutputoctets BIGINT DEFAULT NULL,
     calledstationid VARCHAR(50) NOT NULL DEFAULT '',
     callingstationid VARCHAR(50) NOT NULL DEFAULT '',
-    acctterminatecause VARCHAR(32) NOT NULL DEFAULT '',
+    acctterminatecause VARCHAR(32) DEFAULT '',
     servicetype VARCHAR(32) DEFAULT NULL,
     framedprotocol VARCHAR(32) DEFAULT NULL,
-    framedipaddress VARCHAR(15) NOT NULL DEFAULT '',
-    framedipv6address VARCHAR(45) NOT NULL DEFAULT '',
-    framedipv6prefix VARCHAR(45) NOT NULL DEFAULT '',
-    framedinterfaceid VARCHAR(44) NOT NULL DEFAULT '',
-    delegatedipv6prefix VARCHAR(45) NOT NULL DEFAULT ''
+    framedipaddress VARCHAR(15) DEFAULT '',
+    framedipv6address VARCHAR(45) DEFAULT '',
+    framedipv6prefix VARCHAR(45) DEFAULT '',
+    framedinterfaceid VARCHAR(44) DEFAULT '',
+    delegatedipv6prefix VARCHAR(45) DEFAULT ''
 );
 
 CREATE INDEX IF NOT EXISTS idx_radacct_username ON radacct(username);
