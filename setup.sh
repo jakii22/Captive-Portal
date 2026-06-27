@@ -435,12 +435,21 @@ else
     print_warning "FreeRADIUS SQL config tidak ditemukan. Konfigurasi manual diperlukan."
 fi
 
-# Enable SQL in default site
+# Enable SQL in default site (authorize, accounting, post-auth)
 RADIUS_DEFAULT="/etc/freeradius/3.0/sites-available/default"
 if [ -f "$RADIUS_DEFAULT" ]; then
-    # Uncomment sql in authorize and accounting sections (handles indentation)
+    # Uncomment all forms of sql references: "-sql" and "sql"
     sed -i 's/^[ \t]*#[ \t]*-sql/        -sql/' "$RADIUS_DEFAULT" 2>/dev/null || true
-    print_success "FreeRADIUS default site updated"
+    sed -i 's/^[ \t]*#[ \t]*sql$/        sql/' "$RADIUS_DEFAULT" 2>/dev/null || true
+    print_success "FreeRADIUS default site updated (authorize + accounting + post-auth)"
+fi
+
+# Also enable SQL in inner-tunnel site
+RADIUS_INNER="/etc/freeradius/3.0/sites-available/inner-tunnel"
+if [ -f "$RADIUS_INNER" ]; then
+    sed -i 's/^[ \t]*#[ \t]*-sql/        -sql/' "$RADIUS_INNER" 2>/dev/null || true
+    sed -i 's/^[ \t]*#[ \t]*sql$/        sql/' "$RADIUS_INNER" 2>/dev/null || true
+    print_success "FreeRADIUS inner-tunnel site updated"
 fi
 
 # Add MikroTik client
