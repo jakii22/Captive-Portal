@@ -79,6 +79,10 @@ try {
         throw new RuntimeException('Gagal menyimpan kredensial RADIUS.');
     }
 
+    // Enforce Session-Timeout in RADIUS
+    $limitSeconds = (int) getSetting('free_session_limit_seconds', (string) FREE_SESSION_LIMIT);
+    upsertRadreply($usernameIdentity, 'Session-Timeout', (string) $limitSeconds);
+
     // STEP C: Log the free session
     if (!empty($mac)) {
         logFreeSession($mac, $ip, $usernameIdentity);

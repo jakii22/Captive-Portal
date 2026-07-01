@@ -143,6 +143,30 @@ function upsertUser(string $usernameIdentity, string $name, string $loginMethod,
 }
 
 /**
+ * Save or update radreply entry (upsert)
+ */
+function upsertRadreply(string $username, string $attribute, string $value): bool
+{
+    try {
+        $db = Database::getInstance();
+        $stmt = $db->prepare('SELECT id FROM radreply WHERE username = :username AND attribute = :attribute LIMIT 1');
+        $stmt->execute([':username' => $username, ':attribute' => $attribute]);
+        $row = $stmt->fetch();
+
+        if ($row) {
+            $stmtUpdate = $db->prepare('UPDATE radreply SET value = :value WHERE id = :id');
+            return $stmtUpdate->execute([':value' => $value, ':id' => $row['id']]);
+        } else {
+            $stmtInsert = $db->prepare('INSERT INTO radreply (username, attribute, op, value) VALUES (:username, :attribute, \'=\', :value)');
+            return $stmtInsert->execute([':username' => $username, ':attribute' => $attribute, ':value' => $value]);
+        }
+    } catch (PDOException $e) {
+        error_log('upsertRadreply error: ' . $e->getMessage());
+        return false;
+    }
+}
+
+/**
  * Save or update radcheck entry (upsert)
  */
 function upsertRadcheck(string $username, string $password): bool
