@@ -24,6 +24,8 @@ $facebookAppId   = getSetting('facebook_app_id');
 
 $googleAuthUrl = '';
 if (!empty($googleClientId)) {
+    $googleOauthState = bin2hex(random_bytes(16));
+    $_SESSION['google_oauth_state'] = $googleOauthState;
     $googleAuthUrl = 'https://accounts.google.com/o/oauth2/v2/auth?' . http_build_query([
         'client_id'     => $googleClientId,
         'redirect_uri'  => GOOGLE_REDIRECT_URI,
@@ -31,9 +33,8 @@ if (!empty($googleClientId)) {
         'scope'         => 'openid email profile',
         'access_type'   => 'online',
         'prompt'        => 'select_account',
-        'state'         => bin2hex(random_bytes(16)),
+        'state'         => $googleOauthState,
     ]);
-    $_SESSION['google_oauth_state'] = $googleAuthUrl;
 }
 
 $facebookAuthUrl = '';
