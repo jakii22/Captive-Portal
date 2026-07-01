@@ -394,37 +394,17 @@ RADIUS_SQL="/etc/freeradius/3.0/mods-available/sql"
 if [ -f "$RADIUS_SQL" ]; then
     cp "$RADIUS_SQL" "${RADIUS_SQL}.bak"
 
-    cat > "$RADIUS_SQL" <<EOF
-sql {
-    driver = "rlm_sql_postgresql"
-    dialect = "postgresql"
+    # Configure connection info safely by modifying the existing default file
+    sed -i 's/^[ \t]*driver = .*/\tdriver = "rlm_sql_postgresql"/' "$RADIUS_SQL"
+    sed -i 's/^[ \t]*dialect = .*/\tdialect = "postgresql"/' "$RADIUS_SQL"
+    
+    sed -i "s/^[ \t]*server = .*/\tserver = \"localhost\"/" "$RADIUS_SQL"
+    sed -i "s/^[ \t]*port = .*/\tport = 5432/" "$RADIUS_SQL"
+    sed -i "s/^[ \t]*login = .*/\tlogin = \"$DB_USER\"/" "$RADIUS_SQL"
+    sed -i "s/^[ \t]*password = .*/\tpassword = \"$DB_PASS\"/" "$RADIUS_SQL"
+    sed -i "s/^[ \t]*radius_db = .*/\tradius_db = \"$DB_NAME\"/" "$RADIUS_SQL"
 
-    server = "localhost"
-    port = 5432
-    login = "$DB_USER"
-    password = "$DB_PASS"
-
-    radius_db = "$DB_NAME"
-
-    acct_table1 = "radacct"
-    acct_table2 = "radacct"
-    authcheck_table = "radcheck"
-
-    read_clients = no
-
-    pool {
-        start = 5
-        min = 4
-        max = 10
-        spare = 3
-        lifetime = 0
-        idle_timeout = 60
-    }
-
-    # Load standard FreeRADIUS SQL queries
-    \$INCLUDE \${modconfdir}/\${.:name}/main/\${dialect}/queries.conf
-}
-EOF
+    sed -i "s/^[ \t]*read_clients = .*/\tread_clients = no/" "$RADIUS_SQL"
 
     # Enable SQL module
     ln -sf /etc/freeradius/3.0/mods-available/sql /etc/freeradius/3.0/mods-enabled/sql
