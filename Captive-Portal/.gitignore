@@ -1,0 +1,20 @@
+# Logs
+logs/
+*.log
+
+# Uploads (user-generated content)
+uploads/ads/*
+!uploads/ads/.gitkeep
+
+# Environment & credentials
+.env
+*.bak
+
+# IDE / OS files
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+Thumbs.db
+.DS_Store
