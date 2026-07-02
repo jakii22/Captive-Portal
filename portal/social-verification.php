@@ -40,6 +40,13 @@ try {
 
     switch ($provider) {
         case 'google':
+            // Validate state to prevent CSRF attacks
+            $returnedState = $_GET['state'] ?? '';
+            $expectedState = $_SESSION['google_oauth_state'] ?? '';
+            if (empty($expectedState) || !hash_equals($expectedState, $returnedState)) {
+                redirectWithError('State token tidak valid. Silakan coba login lagi.');
+            }
+            unset($_SESSION['google_oauth_state']); // Consume the state token
             $profile = handleGoogleCallback($code);
             break;
         case 'facebook':
