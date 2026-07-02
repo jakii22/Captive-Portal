@@ -24,8 +24,11 @@ $facebookAppId   = getSetting('facebook_app_id');
 
 $googleAuthUrl = '';
 if (!empty($googleClientId)) {
-    $googleOauthState = bin2hex(random_bytes(16));
-    $_SESSION['google_oauth_state'] = $googleOauthState;
+    if (empty($_SESSION['google_oauth_state'])) {
+        $_SESSION['google_oauth_state'] = bin2hex(random_bytes(16));
+    }
+    $googleOauthState = $_SESSION['google_oauth_state'];
+    
     $googleAuthUrl = 'https://accounts.google.com/o/oauth2/v2/auth?' . http_build_query([
         'client_id'     => $googleClientId,
         'redirect_uri'  => GOOGLE_REDIRECT_URI,
@@ -95,6 +98,17 @@ $siteName = getSetting('site_name', APP_NAME);
 
         <!-- Login Card -->
         <div class="login-card">
+            <?php if (isset($_SESSION['portal_error'])): ?>
+                <div style="background: rgba(220, 38, 38, 0.1); color: #ef4444; padding: 12px; border-radius: 8px; margin-bottom: 20px; text-align: center; font-size: 14px; border: 1px solid rgba(220, 38, 38, 0.2);">
+                    <?= sanitizeInput($_SESSION['portal_error']) ?>
+                </div>
+                <?php unset($_SESSION['portal_error']); ?>
+            <?php elseif (isset($_GET['error'])): ?>
+                <div style="background: rgba(220, 38, 38, 0.1); color: #ef4444; padding: 12px; border-radius: 8px; margin-bottom: 20px; text-align: center; font-size: 14px; border: 1px solid rgba(220, 38, 38, 0.2);">
+                    Login gagal atau dibatalkan. Silakan coba lagi.
+                </div>
+            <?php endif; ?>
+
             <h2 class="login-card-title">Pilih Metode Login</h2>
             <p class="login-card-subtitle">Pilih salah satu cara untuk terhubung ke jaringan Wi-Fi</p>
 
