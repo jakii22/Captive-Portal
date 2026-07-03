@@ -677,8 +677,8 @@ a:hover { color: var(--accent-violet-light); }
 }
 
 .modal {
-    background: #12122a;
-    border: 1px solid var(--glass-border);
+    background: var(--bg-card);
+    border: 1px solid var(--glass-border-strong);
     border-radius: var(--radius-lg);
     width: 100%;
     max-width: 500px;
@@ -686,6 +686,7 @@ a:hover { color: var(--accent-violet-light); }
     overflow-y: auto;
     transform: scale(0.95) translateY(10px);
     transition: transform var(--transition-smooth);
+    box-shadow: var(--glass-shadow);
 }
 
 .modal-overlay.active .modal {
