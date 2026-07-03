@@ -78,7 +78,7 @@ $flash = getFlash();
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="robots" content="noindex, nofollow">
     <title><?= $pageTitle ?> - Admin Panel</title>
-    <link rel="stylesheet" href="assets/css/dashboard.css?v=1.1">
+    <link rel="stylesheet" href="assets/css/dashboard.css?v=1.2">
 </head>
 <body>
 <div class="dashboard-layout">
@@ -171,7 +171,7 @@ $flash = getFlash();
                                 </td>
                                 <td class="text-nowrap text-muted" style="font-size: 0.85rem;"><?= formatBytes((int) $log['acctinputoctets']) ?></td>
                                 <td class="text-nowrap text-muted" style="font-size: 0.85rem;"><?= formatBytes((int) $log['acctoutputoctets']) ?></td>
-                                <td style="font-size: 0.8rem;">
+                                <td class="text-nowrap" style="font-size: 0.8rem;">
                                     <?php if ($log['acctstoptime']): ?>
                                         <span class="text-muted">Selesai (<?= sanitizeInput($log['acctterminatecause'] ?: 'Unknown') ?>)</span>
                                     <?php else: ?>
