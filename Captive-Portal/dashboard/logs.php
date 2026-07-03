@@ -155,7 +155,7 @@ $flash = getFlash();
                                     </div>
                                 </td>
                                 <td class="text-nowrap" style="font-family: monospace; font-size: 0.85rem;"><?= sanitizeInput($log['callingstationid']) ?></td>
-                                <td class="text-nowrap" style="font-family: monospace; font-size: 0.85rem;"><?= sanitizeInput($log['framedipaddress']) ?></td>
+                                <td class="text-nowrap" style="font-family: monospace; font-size: 0.85rem;"><?= sanitizeInput(explode('/', $log['framedipaddress'])[0]) ?></td>
                                 <td class="text-nowrap text-muted" style="font-size: 0.85rem;">
                                     <?= date('d/m/Y H:i:s', strtotime($log['acctstarttime'])) ?>
                                 </td>
