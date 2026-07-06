@@ -35,7 +35,7 @@ if ($loginMethod === 'free' && $sessionLimit > 0) {
     <meta name="description" content="Berhasil terhubung ke <?= sanitizeInput($siteName) ?>">
     <meta name="robots" content="noindex, nofollow">
     <title>Berhasil Terhubung - <?= sanitizeInput($siteName) ?></title>
-    <link rel="stylesheet" href="assets/css/portal.css?v=1.1">
+    <link rel="stylesheet" href="assets/css/portal.css?v=1.2">
 </head>
 <body>
     <!-- Theme Toggle -->
@@ -123,7 +123,7 @@ if ($loginMethod === 'free' && $sessionLimit > 0) {
         </div>
     </div>
 
-    <script src="assets/js/portal.js?v=1.1"></script>
+    <script src="assets/js/portal.js?v=1.2"></script>
 </body>
 </html>
 

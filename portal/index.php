@@ -62,7 +62,7 @@ $siteName = getSetting('site_name', APP_NAME);
     <meta name="description" content="<?= sanitizeInput($siteName) ?> - Pilih metode login untuk terhubung ke internet">
     <meta name="robots" content="noindex, nofollow">
     <title><?= sanitizeInput($siteName) ?> - Login</title>
-    <link rel="stylesheet" href="assets/css/portal.css?v=1.1">
+    <link rel="stylesheet" href="assets/css/portal.css?v=1.2">
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><circle cx='12' cy='12' r='10' fill='%237c3aed'/></svg>">
 </head>
 <body>
@@ -172,7 +172,7 @@ $siteName = getSetting('site_name', APP_NAME);
         </div>
     </div>
 
-    <script src="assets/js/portal.js?v=1.1"></script>
+    <script src="assets/js/portal.js?v=1.2"></script>
 </body>
 </html>
 

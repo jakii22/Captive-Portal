@@ -73,7 +73,7 @@ $pageTitle = 'Detail Pengguna';
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="robots" content="noindex, nofollow">
     <title><?= $pageTitle ?> - Admin Panel</title>
-    <link rel="stylesheet" href="assets/css/dashboard.css?v=1.1">
+    <link rel="stylesheet" href="assets/css/dashboard.css?v=1.2">
 </head>
 <body>
 <div class="dashboard-layout">
@@ -222,6 +222,6 @@ $pageTitle = 'Detail Pengguna';
     </div>
 </div>
 
-<script src="assets/js/dashboard.js?v=1.1"></script>
+<script src="assets/js/dashboard.js?v=1.2"></script>
 </body>
 </html>
