@@ -7,37 +7,37 @@
 
 /* ── CSS Variables ── */
 :root {
-    /* LIGHT MODE (DEFAULT) */
-    --bg-primary: #f0f2f5;
+    /* LIGHT MODE (DEFAULT) - FLAT DESIGN */
+    --bg-primary: #f8f9fc;
     --bg-secondary: #ffffff;
-    --bg-card: rgba(255, 255, 255, 0.85);
-    --bg-card-hover: rgba(255, 255, 255, 1);
-    --glass-border: rgba(0, 0, 0, 0.08);
-    --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    --bg-card: #ffffff;
+    --bg-card-hover: #f1f5f9;
+    --glass-border: #e2e8f0;
+    --glass-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
 
-    --text-primary: #111827;
-    --text-secondary: #4b5563;
-    --text-muted: #6b7280;
+    --text-primary: #1e293b;
+    --text-secondary: #475569;
+    --text-muted: #64748b;
 
-    --accent-violet: #7c3aed;
-    --accent-violet-glow: rgba(124, 58, 237, 0.2);
-    --accent-cyan: #06b6d4;
-    --accent-cyan-glow: rgba(6, 182, 212, 0.2);
+    --accent-violet: #4f46e5;
+    --accent-violet-glow: rgba(79, 70, 229, 0.1);
+    --accent-cyan: #0ea5e9;
+    --accent-cyan-glow: rgba(14, 165, 233, 0.1);
     --accent-green: #10b981;
-    --accent-rose: #f43f5e;
+    --accent-rose: #ef4444;
 
     --google-red: #ea4335;
     --google-blue: #4285f4;
     --facebook-blue: #1877f2;
     --free-green: #10b981;
 
-    --radius-sm: 8px;
-    --radius-md: 12px;
-    --radius-lg: 20px;
-    --radius-xl: 28px;
+    --radius-sm: 4px;
+    --radius-md: 6px;
+    --radius-lg: 8px;
+    --radius-xl: 12px;
 
-    --transition-fast: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-    --transition-smooth: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-fast: 0.15s ease;
+    --transition-smooth: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     --transition-bounce: 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
@@ -86,51 +86,12 @@ body {
     position: fixed;
     inset: 0;
     z-index: 0;
-    overflow: hidden;
-}
-
-.portal-bg::before {
-    content: '';
-    position: absolute;
-    width: 600px;
-    height: 600px;
-    background: radial-gradient(circle, var(--accent-violet-glow) 0%, transparent 70%);
-    top: -200px;
-    left: -100px;
-    animation: floatOrb1 15s ease-in-out infinite;
-}
-
-.portal-bg::after {
-    content: '';
-    position: absolute;
-    width: 500px;
-    height: 500px;
-    background: radial-gradient(circle, var(--accent-cyan-glow) 0%, transparent 70%);
-    bottom: -150px;
-    right: -100px;
-    animation: floatOrb2 18s ease-in-out infinite;
-}
-
-@keyframes floatOrb1 {
-    0%, 100% { transform: translate(0, 0) scale(1); }
-    33% { transform: translate(80px, 60px) scale(1.1); }
-    66% { transform: translate(-40px, 120px) scale(0.95); }
-}
-
-@keyframes floatOrb2 {
-    0%, 100% { transform: translate(0, 0) scale(1); }
-    33% { transform: translate(-60px, -80px) scale(1.15); }
-    66% { transform: translate(100px, -40px) scale(0.9); }
+    background: var(--bg-primary);
 }
 
 /* ── Particle Grid ── */
 .particle-grid {
-    position: fixed;
-    inset: 0;
-    z-index: 0;
-    background-image: 
-        radial-gradient(circle at 1px 1px, rgba(255,255,255,0.03) 1px, transparent 0);
-    background-size: 40px 40px;
+    display: none;
 }
 
 /* ── Main Container ── */
@@ -155,24 +116,15 @@ body {
 .portal-logo {
     width: 80px;
     height: 80px;
-    background: linear-gradient(135deg, var(--accent-violet), var(--accent-cyan));
+    background: var(--bg-card);
+    border: 1px solid var(--glass-border);
     border-radius: var(--radius-lg);
     display: flex;
     align-items: center;
     justify-content: center;
     margin: 0 auto 16px;
-    box-shadow: 0 0 40px var(--accent-violet-glow);
     position: relative;
     overflow: hidden;
-}
-
-.portal-logo::after {
-    content: '';
-    position: absolute;
-    inset: 2px;
-    background: var(--bg-primary);
-    border-radius: calc(var(--radius-lg) - 2px);
-    z-index: 0;
 }
 
 .portal-logo svg {
@@ -188,10 +140,7 @@ body {
 .portal-brand h1 {
     font-size: 1.5rem;
     font-weight: 700;
-    background: linear-gradient(135deg, var(--text-primary), var(--accent-cyan));
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
+    color: var(--text-primary);
     letter-spacing: -0.02em;
 }
 
@@ -205,15 +154,15 @@ body {
 /* ── Login Card ── */
 .login-card {
     background: var(--bg-card);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
     border: 1px solid var(--glass-border);
     border-radius: var(--radius-xl);
     padding: 32px 24px;
     width: 100%;
     max-width: 400px;
     box-shadow: var(--glass-shadow);
-    animation: fadeInUp 0.8s ease-out 0.2s both;
+    position: relative;
+    z-index: 2;
+    animation: scaleIn 0.5s var(--transition-bounce) backwards;
 }
 
 .login-card-title {
@@ -403,16 +352,14 @@ body {
 }
 
 .success-icon {
-    width: 100px;
-    height: 100px;
-    background: linear-gradient(135deg, var(--accent-green), var(--accent-cyan));
+    width: 80px;
+    height: 80px;
+    background: var(--accent-green);
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
     margin: 0 auto 24px;
-    animation: successPulse 2s ease-in-out infinite;
-    box-shadow: 0 0 60px rgba(16, 185, 129, 0.3);
 }
 
 .success-icon svg {
@@ -440,10 +387,7 @@ body {
     font-size: 1.75rem;
     font-weight: 700;
     margin-bottom: 8px;
-    background: linear-gradient(135deg, var(--accent-green), var(--accent-cyan));
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
+    color: var(--accent-green);
 }
 
 .success-subtitle {

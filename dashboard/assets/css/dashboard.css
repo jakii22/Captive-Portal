@@ -7,43 +7,43 @@
 
 /* ── CSS Variables ── */
 :root {
-    /* LIGHT MODE (DEFAULT) */
-    --bg-body: #f4f6f8;
-    --bg-sidebar: rgba(255, 255, 255, 0.95);
-    --bg-header: rgba(255, 255, 255, 0.85);
+    /* LIGHT MODE (DEFAULT) - FLAT DESIGN */
+    --bg-body: #f8f9fc;
+    --bg-sidebar: #ffffff;
+    --bg-header: #ffffff;
     --bg-card: #ffffff;
-    --bg-card-hover: #f9fafb;
+    --bg-card-hover: #f1f5f9;
     --bg-input: #ffffff;
-    --bg-table-row: rgba(0, 0, 0, 0.02);
-    --bg-table-hover: rgba(0, 0, 0, 0.04);
+    --bg-table-row: #ffffff;
+    --bg-table-hover: #f8fafc;
 
-    --glass-border: rgba(0, 0, 0, 0.08);
-    --glass-border-strong: rgba(0, 0, 0, 0.15);
-    --glass-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    --glass-border: #e2e8f0;
+    --glass-border-strong: #cbd5e1;
+    --glass-shadow: 0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06);
 
-    --text-primary: #111827;
-    --text-secondary: #4b5563;
-    --text-muted: #6b7280;
+    --text-primary: #1e293b;
+    --text-secondary: #475569;
+    --text-muted: #64748b;
 
-    /* Accents stay the same */
-    --accent-violet: #7c3aed;
-    --accent-violet-light: #8b5cf6;
-    --accent-violet-glow: rgba(124, 58, 237, 0.2);
-    --accent-cyan: #06b6d4;
-    --accent-cyan-glow: rgba(6, 182, 212, 0.2);
+    /* Accents */
+    --accent-violet: #4f46e5;
+    --accent-violet-light: #6366f1;
+    --accent-violet-glow: rgba(79, 70, 229, 0.1);
+    --accent-cyan: #0ea5e9;
+    --accent-cyan-glow: rgba(14, 165, 233, 0.1);
     --accent-green: #10b981;
-    --accent-green-glow: rgba(16, 185, 129, 0.2);
+    --accent-green-glow: rgba(16, 185, 129, 0.1);
     --accent-amber: #f59e0b;
-    --accent-rose: #f43f5e;
-    --accent-rose-glow: rgba(244, 63, 94, 0.2);
+    --accent-rose: #ef4444;
+    --accent-rose-glow: rgba(239, 68, 68, 0.1);
     --accent-blue: #3b82f6;
 
     --sidebar-width: 260px;
     --header-height: 64px;
-    --radius-sm: 6px;
-    --radius-md: 10px;
-    --radius-lg: 16px;
-    --radius-xl: 24px;
+    --radius-sm: 4px;
+    --radius-md: 6px;
+    --radius-lg: 8px;
+    --radius-xl: 12px;
 
     --transition-fast: 0.15s ease;
     --transition-smooth: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -111,7 +111,6 @@ a:hover { color: var(--accent-violet-light); }
     width: var(--sidebar-width);
     height: 100vh;
     background: var(--bg-sidebar);
-    backdrop-filter: blur(20px);
     border-right: 1px solid var(--glass-border);
     display: flex;
     flex-direction: column;
@@ -130,7 +129,7 @@ a:hover { color: var(--accent-violet-light); }
 .sidebar-brand-logo {
     width: 36px;
     height: 36px;
-    background: linear-gradient(135deg, var(--accent-violet), var(--accent-cyan));
+    background: var(--accent-blue);
     border-radius: var(--radius-sm);
     display: flex;
     align-items: center;
@@ -147,10 +146,7 @@ a:hover { color: var(--accent-violet-light); }
 .sidebar-brand-text {
     font-size: 1rem;
     font-weight: 700;
-    background: linear-gradient(135deg, var(--text-primary), var(--accent-cyan));
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
+    color: var(--text-primary);
     line-height: 1.2;
 }
 
@@ -195,9 +191,9 @@ a:hover { color: var(--accent-violet-light); }
 }
 
 .sidebar-link.active {
-    background: linear-gradient(135deg, rgba(124, 58, 237, 0.15), rgba(6, 182, 212, 0.1));
-    color: var(--accent-cyan);
-    border: 1px solid rgba(124, 58, 237, 0.2);
+    background: rgba(59, 130, 246, 0.1);
+    color: var(--accent-blue);
+    border: 1px solid rgba(59, 130, 246, 0.2);
 }
 
 .sidebar-link svg {
@@ -224,7 +220,7 @@ a:hover { color: var(--accent-violet-light); }
 .sidebar-user-avatar {
     width: 32px;
     height: 32px;
-    background: linear-gradient(135deg, var(--accent-violet), var(--accent-cyan));
+    background: var(--accent-blue);
     border-radius: 50%;
     display: flex;
     align-items: center;
@@ -262,17 +258,16 @@ a:hover { color: var(--accent-violet-light); }
 }
 
 .main-header {
-    position: sticky;
-    top: 0;
-    z-index: 40;
     height: var(--header-height);
     background: var(--bg-header);
-    backdrop-filter: blur(12px);
     border-bottom: 1px solid var(--glass-border);
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 0 28px;
+    padding: 0 24px;
+    position: sticky;
+    top: 0;
+    z-index: 40;
     transition: background-color var(--transition-smooth);
 }
 
@@ -332,8 +327,8 @@ a:hover { color: var(--accent-violet-light); }
     top: 0;
     left: 0;
     right: 0;
-    height: 2px;
-    background: linear-gradient(90deg, var(--accent-violet), var(--accent-cyan));
+    height: 3px;
+    background: var(--accent-blue);
     opacity: 0;
     transition: opacity var(--transition-smooth);
 }
@@ -507,12 +502,12 @@ a:hover { color: var(--accent-violet-light); }
 }
 
 .btn-primary {
-    background: linear-gradient(135deg, var(--accent-violet), var(--accent-violet-light));
+    background: var(--accent-blue);
     border-color: transparent;
     color: white;
 }
 .btn-primary:hover {
-    box-shadow: 0 4px 15px var(--accent-violet-glow);
+    background: #2563eb;
     transform: translateY(-1px);
     color: white;
 }
