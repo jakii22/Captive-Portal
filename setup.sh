@@ -345,30 +345,6 @@ server {
     }
 
     # ──────────────────────────────────────────────
-    # Restrict /portal/ to local network only
-    # Hanya bisa diakses oleh pengguna yang
-    # terhubung ke jaringan WiFi hotspot
-    # ──────────────────────────────────────────────
-    location ^~ /portal/ {
-        allow 10.0.0.0/8;
-        allow 172.16.0.0/12;
-        allow 192.168.0.0/16;
-        allow 127.0.0.1;
-        allow 180.214.240.254;    # IP publik MikroTik 1
-        allow 182.2.74.132;       # IP publik MikroTik 2 / Cellular
-        deny all;
-
-        try_files \$uri \$uri/ =404;
-
-        location ~ \.php$ {
-            include snippets/fastcgi-php.conf;
-            fastcgi_pass unix:${PHP_FPM_SOCK};
-            fastcgi_param SCRIPT_FILENAME \$document_root\$fastcgi_script_name;
-            include fastcgi_params;
-        }
-    }
-
-    # ──────────────────────────────────────────────
     # PHP processing via PHP-FPM
     # ──────────────────────────────────────────────
     location / {
