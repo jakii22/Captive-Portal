@@ -141,6 +141,7 @@ $pageTitle = 'Dashboard';
 
             <!-- Stat Cards -->
             <div class="stats-grid">
+                <a href="users.php" class="stat-card-link">
                 <div class="stat-card">
                     <div class="stat-card-header">
                         <span class="stat-card-label">Total Pengguna</span>
@@ -151,7 +152,9 @@ $pageTitle = 'Dashboard';
                     <div class="stat-card-value"><?= number_format($totalUsers) ?></div>
                     <div class="stat-card-change positive">+<?= $usersToday ?> hari ini</div>
                 </div>
+                </a>
 
+                <a href="active-sessions.php" class="stat-card-link">
                 <div class="stat-card">
                     <div class="stat-card-header">
                         <span class="stat-card-label">Sesi Aktif</span>
@@ -162,7 +165,9 @@ $pageTitle = 'Dashboard';
                     <div class="stat-card-value"><?= number_format($activeSessions) ?></div>
                     <div class="stat-card-change">Sedang terhubung</div>
                 </div>
+                </a>
 
+                <a href="traffic.php" class="stat-card-link">
                 <div class="stat-card">
                     <div class="stat-card-header">
                         <span class="stat-card-label">Upload Hari Ini</span>
@@ -173,7 +178,9 @@ $pageTitle = 'Dashboard';
                     <div class="stat-card-value"><?= formatBytes($totalUpload) ?></div>
                     <div class="stat-card-change">Total upload</div>
                 </div>
+                </a>
 
+                <a href="traffic.php" class="stat-card-link">
                 <div class="stat-card">
                     <div class="stat-card-header">
                         <span class="stat-card-label">Download Hari Ini</span>
@@ -184,6 +191,7 @@ $pageTitle = 'Dashboard';
                     <div class="stat-card-value"><?= formatBytes($totalDownload) ?></div>
                     <div class="stat-card-change">Total download</div>
                 </div>
+                </a>
             </div>
 
             <!-- Charts Row -->

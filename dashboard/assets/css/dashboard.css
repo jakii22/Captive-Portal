@@ -672,7 +672,7 @@ a:hover { color: var(--accent-violet-light); }
 }
 
 .modal {
-    background: #12122a;
+    background: var(--bg-card);
     border: 1px solid var(--glass-border);
     border-radius: var(--radius-lg);
     width: 100%;
@@ -797,7 +797,7 @@ a:hover { color: var(--accent-violet-light); }
 }
 
 .pagination .active {
-    background: linear-gradient(135deg, var(--accent-violet), var(--accent-violet-light));
+    background: var(--accent-blue);
     color: white;
 }
 
@@ -941,29 +941,6 @@ a:hover { color: var(--accent-violet-light); }
     min-height: 100vh;
     background: var(--bg-body);
     padding: 20px;
-    position: relative;
-}
-
-.login-page::before {
-    content: '';
-    position: absolute;
-    width: 500px;
-    height: 500px;
-    background: radial-gradient(circle, var(--accent-violet-glow) 0%, transparent 70%);
-    top: -100px;
-    right: -100px;
-    pointer-events: none;
-}
-
-.login-page::after {
-    content: '';
-    position: absolute;
-    width: 400px;
-    height: 400px;
-    background: radial-gradient(circle, var(--accent-cyan-glow) 0%, transparent 70%);
-    bottom: -100px;
-    left: -100px;
-    pointer-events: none;
 }
 
 .login-box {
@@ -971,7 +948,6 @@ a:hover { color: var(--accent-violet-light); }
     z-index: 1;
     background: var(--bg-card);
     border: 1px solid var(--glass-border);
-    backdrop-filter: blur(20px);
     border-radius: var(--radius-xl);
     padding: 40px 32px;
     width: 100%;
@@ -1077,3 +1053,24 @@ a:hover { color: var(--accent-violet-light); }
 .flex-wrap { flex-wrap: wrap; }
 .w-full { width: 100%; }
 .hidden { display: none !important; }
+
+/* ── Clickable Stat Card Link ── */
+a.stat-card-link {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+}
+
+a.stat-card-link .stat-card {
+    cursor: pointer;
+}
+
+a.stat-card-link:hover .stat-card {
+    background: var(--bg-card-hover);
+    border-color: var(--glass-border-strong);
+    transform: translateY(-2px);
+}
+
+a.stat-card-link:hover .stat-card::before {
+    opacity: 1;
+}
