@@ -14,6 +14,21 @@ $linkOrig = $_GET['link-orig'] ?? $_GET['link_orig'] ?? '';
 
 // Store in session for later use
 session_start();
+
+// ── Hotspot Access Guard ──────────────────────────────────────────────────────
+// Portal hanya bisa diakses melalui redirect dari MikroTik hotspot.
+// MikroTik selalu menyertakan parameter mac/ip/link-orig saat redirect.
+$hasMikrotikRedirect = !empty($mac) || !empty($ip) || !empty($linkOrig);
+$hasActiveSession    = !empty($_SESSION['portal_mac']) || !empty($_SESSION['portal_ip']);
+$hasErrorRedirect    = isset($_GET['error']); // MikroTik bisa redirect balik dengan error
+
+if (!$hasMikrotikRedirect && !$hasActiveSession && !$hasErrorRedirect) {
+    http_response_code(403);
+    require __DIR__ . '/access-denied.php';
+    exit;
+}
+// ─────────────────────────────────────────────────────────────────────────────
+
 if ($mac)      $_SESSION['portal_mac'] = $mac;
 if ($ip)       $_SESSION['portal_ip'] = $ip;
 if ($linkOrig) $_SESSION['portal_link_orig'] = $linkOrig;

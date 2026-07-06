@@ -9,6 +9,15 @@ require_once __DIR__ . '/../includes/functions.php';
 
 session_start();
 
+// ── Hotspot Access Guard ──────────────────────────────────────────────────────
+// Halaman ini hanya bisa diakses setelah login berhasil melalui hotspot.
+if (empty($_SESSION['login_success'])) {
+    http_response_code(403);
+    require __DIR__ . '/access-denied.php';
+    exit;
+}
+// ─────────────────────────────────────────────────────────────────────────────
+
 $loginSuccess  = $_SESSION['login_success'] ?? false;
 $loginUsername  = $_SESSION['login_username'] ?? '';
 $loginName     = $_SESSION['login_name'] ?? 'User';
