@@ -14,27 +14,15 @@ document.addEventListener('DOMContentLoaded', () => {
  */
 function initTheme() {
     const themeToggle = document.getElementById('themeToggle');
-    // Always check localStorage and set theme
-    const currentTheme = localStorage.getItem('theme') || 'light';
-    if (currentTheme === 'dark') {
-        document.documentElement.setAttribute('data-theme', 'dark');
-    } else {
-        document.documentElement.removeAttribute('data-theme');
+    
+    // Selalu paksa menggunakan Light Mode (berdasarkan request)
+    localStorage.setItem('theme', 'light');
+    document.documentElement.removeAttribute('data-theme');
+
+    // Sembunyikan tombol toggle agar tidak bisa diubah ke dark mode
+    if (themeToggle) {
+        themeToggle.style.display = 'none';
     }
-
-    if (!themeToggle) return;
-
-    themeToggle.addEventListener('click', (e) => {
-        e.preventDefault();
-        const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
-        if (isDark) {
-            document.documentElement.removeAttribute('data-theme');
-            localStorage.setItem('theme', 'light');
-        } else {
-            document.documentElement.setAttribute('data-theme', 'dark');
-            localStorage.setItem('theme', 'dark');
-        }
-    });
 }
 
 /**

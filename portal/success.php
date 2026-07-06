@@ -108,6 +108,13 @@ if ($loginMethod === 'free' && $sessionLimit > 0) {
                 <p>Login method: <?= ucfirst(sanitizeInput($loginMethod)) ?></p>
                 <p style="margin-top: 4px;">Nikmati akses internet Anda!</p>
             </div>
+
+            <!-- Logout Button -->
+            <div style="margin-top: 20px;">
+                <a href="logout.php" class="login-btn" style="background-color: var(--accent-rose); color: white; text-decoration: none; padding: 12px 24px; border-radius: var(--radius-md); font-weight: 600; display: inline-block; width: 100%; text-align: center;">
+                    Keluar / Logout
+                </a>
+            </div>
         </div>
 
         <!-- Footer -->
