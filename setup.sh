@@ -354,6 +354,7 @@ server {
         allow 172.16.0.0/12;
         allow 192.168.0.0/16;
         allow 127.0.0.1;
+        allow 180.214.240.254;    # IP publik MikroTik
         deny all;
 
         try_files \$uri \$uri/ =404;
