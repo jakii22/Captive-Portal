@@ -10,6 +10,15 @@ require_once __DIR__ . '/../includes/functions.php';
 
 session_start();
 
+// ── Hotspot Access Guard ──────────────────────────────────────────────────────
+// Halaman ini hanya bisa diakses setelah melalui portal/index.php dari MikroTik.
+if (empty($_SESSION['portal_mac']) && empty($_SESSION['portal_ip'])) {
+    http_response_code(403);
+    require __DIR__ . '/access-denied.php';
+    exit;
+}
+// ─────────────────────────────────────────────────────────────────────────────
+
 // Get MAC address from session (captured from MikroTik redirect)
 $mac = $_SESSION['portal_mac'] ?? '';
 $ip  = $_SESSION['portal_ip'] ?? ($_SERVER['REMOTE_ADDR'] ?? '0.0.0.0');
@@ -78,10 +87,6 @@ try {
     if (!$radcheckSaved) {
         throw new RuntimeException('Gagal menyimpan kredensial RADIUS.');
     }
-
-    // Enforce Session-Timeout in RADIUS
-    $limitSeconds = (int) getSetting('free_session_limit_seconds', (string) FREE_SESSION_LIMIT);
-    upsertRadreply($usernameIdentity, 'Session-Timeout', (string) $limitSeconds);
 
     // STEP C: Log the free session
     if (!empty($mac)) {

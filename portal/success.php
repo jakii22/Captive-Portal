@@ -9,6 +9,15 @@ require_once __DIR__ . '/../includes/functions.php';
 
 session_start();
 
+// ── Hotspot Access Guard ──────────────────────────────────────────────────────
+// Halaman ini hanya bisa diakses setelah login berhasil melalui hotspot.
+if (empty($_SESSION['login_success'])) {
+    http_response_code(403);
+    require __DIR__ . '/access-denied.php';
+    exit;
+}
+// ─────────────────────────────────────────────────────────────────────────────
+
 $loginSuccess  = $_SESSION['login_success'] ?? false;
 $loginUsername  = $_SESSION['login_username'] ?? '';
 $loginName     = $_SESSION['login_name'] ?? 'User';
@@ -35,7 +44,7 @@ if ($loginMethod === 'free' && $sessionLimit > 0) {
     <meta name="description" content="Berhasil terhubung ke <?= sanitizeInput($siteName) ?>">
     <meta name="robots" content="noindex, nofollow">
     <title>Berhasil Terhubung - <?= sanitizeInput($siteName) ?></title>
-    <link rel="stylesheet" href="assets/css/portal.css?v=1.2">
+    <link rel="stylesheet" href="assets/css/portal.css?v=1.1">
 </head>
 <body>
     <!-- Theme Toggle -->
@@ -108,13 +117,6 @@ if ($loginMethod === 'free' && $sessionLimit > 0) {
                 <p>Login method: <?= ucfirst(sanitizeInput($loginMethod)) ?></p>
                 <p style="margin-top: 4px;">Nikmati akses internet Anda!</p>
             </div>
-
-            <!-- Logout Button -->
-            <div style="margin-top: 20px;">
-                <a href="logout.php" class="login-btn" style="background-color: var(--accent-rose); color: white; text-decoration: none; padding: 12px 24px; border-radius: var(--radius-md); font-weight: 600; display: inline-block; width: 100%; text-align: center;">
-                    Keluar / Logout
-                </a>
-            </div>
         </div>
 
         <!-- Footer -->
@@ -123,7 +125,7 @@ if ($loginMethod === 'free' && $sessionLimit > 0) {
         </div>
     </div>
 
-    <script src="assets/js/portal.js?v=1.2"></script>
+    <script src="assets/js/portal.js?v=1.1"></script>
 </body>
 </html>
 

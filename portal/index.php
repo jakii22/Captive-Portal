@@ -14,6 +14,21 @@ $linkOrig = $_GET['link-orig'] ?? $_GET['link_orig'] ?? '';
 
 // Store in session for later use
 session_start();
+
+// ── Hotspot Access Guard ──────────────────────────────────────────────────────
+// Portal hanya bisa diakses melalui redirect dari MikroTik hotspot.
+// MikroTik selalu menyertakan parameter mac/ip/link-orig saat redirect.
+$hasMikrotikRedirect = !empty($mac) || !empty($ip) || !empty($linkOrig);
+$hasActiveSession    = !empty($_SESSION['portal_mac']) || !empty($_SESSION['portal_ip']);
+$hasErrorRedirect    = isset($_GET['error']); // MikroTik bisa redirect balik dengan error
+
+if (!$hasMikrotikRedirect && !$hasActiveSession && !$hasErrorRedirect) {
+    http_response_code(403);
+    require __DIR__ . '/access-denied.php';
+    exit;
+}
+// ─────────────────────────────────────────────────────────────────────────────
+
 if ($mac)      $_SESSION['portal_mac'] = $mac;
 if ($ip)       $_SESSION['portal_ip'] = $ip;
 if ($linkOrig) $_SESSION['portal_link_orig'] = $linkOrig;
@@ -24,11 +39,8 @@ $facebookAppId   = getSetting('facebook_app_id');
 
 $googleAuthUrl = '';
 if (!empty($googleClientId)) {
-    if (empty($_SESSION['google_oauth_state'])) {
-        $_SESSION['google_oauth_state'] = bin2hex(random_bytes(16));
-    }
-    $googleOauthState = $_SESSION['google_oauth_state'];
-    
+    $googleState = bin2hex(random_bytes(16));
+    $_SESSION['google_oauth_state'] = $googleState; // simpan state-nya, bukan URL-nya
     $googleAuthUrl = 'https://accounts.google.com/o/oauth2/v2/auth?' . http_build_query([
         'client_id'     => $googleClientId,
         'redirect_uri'  => GOOGLE_REDIRECT_URI,
@@ -36,7 +48,7 @@ if (!empty($googleClientId)) {
         'scope'         => 'openid email profile',
         'access_type'   => 'online',
         'prompt'        => 'select_account',
-        'state'         => $googleOauthState,
+        'state'         => $googleState,
     ]);
 }
 
@@ -62,7 +74,7 @@ $siteName = getSetting('site_name', APP_NAME);
     <meta name="description" content="<?= sanitizeInput($siteName) ?> - Pilih metode login untuk terhubung ke internet">
     <meta name="robots" content="noindex, nofollow">
     <title><?= sanitizeInput($siteName) ?> - Login</title>
-    <link rel="stylesheet" href="assets/css/portal.css?v=1.2">
+    <link rel="stylesheet" href="assets/css/portal.css?v=1.1">
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><circle cx='12' cy='12' r='10' fill='%237c3aed'/></svg>">
 </head>
 <body>
@@ -98,24 +110,13 @@ $siteName = getSetting('site_name', APP_NAME);
 
         <!-- Login Card -->
         <div class="login-card">
-            <?php if (isset($_SESSION['portal_error'])): ?>
-                <div style="background: rgba(220, 38, 38, 0.1); color: #ef4444; padding: 12px; border-radius: 8px; margin-bottom: 20px; text-align: center; font-size: 14px; border: 1px solid rgba(220, 38, 38, 0.2);">
-                    <?= sanitizeInput($_SESSION['portal_error']) ?>
-                </div>
-                <?php unset($_SESSION['portal_error']); ?>
-            <?php elseif (isset($_GET['error'])): ?>
-                <div style="background: rgba(220, 38, 38, 0.1); color: #ef4444; padding: 12px; border-radius: 8px; margin-bottom: 20px; text-align: center; font-size: 14px; border: 1px solid rgba(220, 38, 38, 0.2);">
-                    Login gagal atau dibatalkan. Silakan coba lagi.
-                </div>
-            <?php endif; ?>
-
             <h2 class="login-card-title">Pilih Metode Login</h2>
             <p class="login-card-subtitle">Pilih salah satu cara untuk terhubung ke jaringan Wi-Fi</p>
 
             <div class="login-methods">
                 <!-- Google Login -->
                 <?php if (!empty($googleAuthUrl)): ?>
-                <a href="<?= htmlspecialchars($googleAuthUrl) ?>" class="login-btn login-btn--google" id="btn-google">
+                <a href="<?= htmlspecialchars($googleAuthUrl) ?>" target="_blank" rel="noopener noreferrer" class="login-btn login-btn--google" id="btn-google">
                     <div class="login-btn-icon">
                         <svg viewBox="0 0 24 24">
                             <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4"/>
@@ -133,7 +134,7 @@ $siteName = getSetting('site_name', APP_NAME);
 
                 <!-- Facebook Login -->
                 <?php if (!empty($facebookAuthUrl)): ?>
-                <a href="<?= htmlspecialchars($facebookAuthUrl) ?>" class="login-btn login-btn--facebook" id="btn-facebook">
+                <a href="<?= htmlspecialchars($facebookAuthUrl) ?>" target="_blank" rel="noopener noreferrer" class="login-btn login-btn--facebook" id="btn-facebook">
                     <div class="login-btn-icon">
                         <svg viewBox="0 0 24 24" fill="#1877F2">
                             <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
@@ -172,7 +173,7 @@ $siteName = getSetting('site_name', APP_NAME);
         </div>
     </div>
 
-    <script src="assets/js/portal.js?v=1.2"></script>
+    <script src="assets/js/portal.js?v=1.1"></script>
 </body>
 </html>
 
