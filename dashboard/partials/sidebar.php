@@ -7,7 +7,7 @@ $currentPage = $currentPage ?? '';
 $admin = $admin ?? getCurrentAdmin();
 ?>
 <aside class="sidebar" id="sidebar">
-    <div class="sidebar-brand">
+    <a href="index.php" class="sidebar-brand" style="text-decoration:none; color:inherit;">
         <div class="sidebar-brand-logo">
             <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
         </div>
@@ -15,7 +15,7 @@ $admin = $admin ?? getCurrentAdmin();
             <div class="sidebar-brand-text">Admin Panel</div>
             <div class="sidebar-brand-sub">Captive Portal</div>
         </div>
-    </div>
+    </a>
 
     <nav class="sidebar-nav">
         <div class="sidebar-nav-label">Menu Utama</div>
