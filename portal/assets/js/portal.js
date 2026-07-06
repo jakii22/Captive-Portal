@@ -130,10 +130,12 @@ function initSessionTimer() {
     const remainingSeconds = parseInt(timerEl.dataset.remaining, 10);
     if (isNaN(remainingSeconds) || remainingSeconds <= 0) return;
 
-    let remaining = remainingSeconds;
+    const endTime = Date.now() + (remainingSeconds * 1000);
     const valueEl = timerEl.querySelector('.session-timer-value');
 
     function updateTimer() {
+        let remaining = Math.max(0, Math.floor((endTime - Date.now()) / 1000));
+
         if (remaining <= 0) {
             valueEl.textContent = '00:00:00';
             valueEl.style.color = '#f43f5e';
@@ -153,8 +155,6 @@ function initSessionTimer() {
         if (remaining < 300) {
             valueEl.style.color = '#f43f5e';
         }
-
-        remaining--;
     }
 
     updateTimer();
