@@ -45,7 +45,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             } else {
                 // Return false berarti user tidak ditemukan di daftar aktif MikroTik (stale session).
                 // Kita tutup paksa sesinya di database.
-                global $db;
+                $db = Database::getInstance();
                 $stmt = $db->prepare("UPDATE radacct SET acctstoptime = NOW(), acctterminatecause = 'Admin-Reset' WHERE username = ? AND acctstoptime IS NULL");
                 $stmt->execute([$disconnectUsername]);
                 setFlash('success', 'Sesi sudah tidak aktif di MikroTik. Sesi di portal berhasil dibersihkan.');
