@@ -507,46 +507,45 @@ function disconnectMikrotikUser(string $username): bool
             throw new RuntimeException("Koneksi API gagal: " . $error);
         }
 
-        // Find active session by user
-        $activeSessions = $api->comm('/ip/hotspot/active/print', [
-            '?user' => $username,
-        ]);
-
-        // Find MAC cookies by user
-        $cookies = $api->comm('/ip/hotspot/cookie/print', [
-            '?user' => $username,
-        ]);
-
-        if (empty($activeSessions) && empty($cookies)) {
-            $api->disconnect();
-            // FreeRADIUS radacct sometimes has stale sessions. 
-            // If it's not in MikroTik (active or cookie), we can consider it already disconnected.
-            return false;
-        }
+        // Fetch ALL active sessions and filter in PHP (more robust than API query)
+        $activeSessions = $api->comm('/ip/hotspot/active/print');
+        $cookies = $api->comm('/ip/hotspot/cookie/print');
 
         $success = false;
-        
-        // Remove active sessions
-        foreach ($activeSessions as $session) {
-            if (isset($session['.id'])) {
-                $api->comm('/ip/hotspot/active/remove', [
-                    '.id' => $session['.id']
-                ]);
-                $success = true;
+        $found = false;
+
+        if (is_array($activeSessions)) {
+            foreach ($activeSessions as $session) {
+                if (isset($session['user']) && $session['user'] === $username && isset($session['.id'])) {
+                    $found = true;
+                    $api->comm('/ip/hotspot/active/remove', [
+                        '.id' => $session['.id']
+                    ]);
+                    $success = true;
+                }
             }
         }
 
-        // Remove MAC cookies so they don't auto-login again
-        foreach ($cookies as $cookie) {
-            if (isset($cookie['.id'])) {
-                $api->comm('/ip/hotspot/cookie/remove', [
-                    '.id' => $cookie['.id']
-                ]);
-                $success = true;
+        if (is_array($cookies)) {
+            foreach ($cookies as $cookie) {
+                if (isset($cookie['user']) && $cookie['user'] === $username && isset($cookie['.id'])) {
+                    $found = true;
+                    $api->comm('/ip/hotspot/cookie/remove', [
+                        '.id' => $cookie['.id']
+                    ]);
+                    $success = true;
+                }
             }
         }
-        
+
         $api->disconnect();
+
+        if (!$found) {
+            // FreeRADIUS radacct sometimes has stale sessions. 
+            // If it's not in MikroTik (active or cookie), we consider it already disconnected.
+            return false;
+        }
+        
         return $success;
 
     } catch (Exception $e) {
