@@ -364,6 +364,9 @@ function deleteUser(int $userId): bool
 
         $username = $user['username_identity'];
 
+        // Disconnect user from MikroTik first (if configured)
+        disconnectMikrotikUser($username);
+
         $db->beginTransaction();
 
         // Delete from RADIUS tables
@@ -475,4 +478,51 @@ function getPagination(int $totalItems, int $perPage = 20, int $currentPage = 1)
         'has_prev'     => $currentPage > 1,
         'has_next'     => $currentPage < $totalPages,
     ];
+}
+
+/**
+ * Disconnect a user from MikroTik active hotspot sessions
+ */
+function disconnectMikrotikUser(string $username): bool
+{
+    $mtIp       = getSetting('mikrotik_ip');
+    $mtUsername = getSetting('mikrotik_username');
+    $mtPassword = getSetting('mikrotik_password');
+    $mtPort     = getSetting('mikrotik_port', '8728');
+
+    if (empty($mtIp) || empty($mtUsername)) {
+        return false; // Not configured
+    }
+
+    require_once __DIR__ . '/RouterOS/RouterosAPI.php';
+    try {
+        $api = new RouterosAPI();
+        $api->setTimeout(3);
+        $api->setPort((int) $mtPort);
+        $api->setAttempts(1);
+
+        if ($api->connect($mtIp, $mtUsername, $mtPassword)) {
+            // Find active session by user
+            $activeSessions = $api->comm('/ip/hotspot/active/print', [
+                '?user' => $username,
+            ]);
+
+            $success = false;
+            foreach ($activeSessions as $session) {
+                if (isset($session['.id'])) {
+                    $api->comm('/ip/hotspot/active/remove', [
+                        '.id' => $session['.id']
+                    ]);
+                    $success = true;
+                }
+            }
+            
+            $api->disconnect();
+            return $success;
+        }
+    } catch (Exception $e) {
+        error_log('MikroTik Disconnect Error: ' . $e->getMessage());
+    }
+    
+    return false;
 }

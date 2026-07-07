@@ -34,6 +34,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             } else {
                 setFlash('error', 'Gagal menghapus pengguna. Pengguna tidak ditemukan.');
             }
+        } elseif ($action === 'disconnect') {
+            $disconnectUsername = $_POST['username'] ?? '';
+            if (empty($disconnectUsername)) {
+                throw new RuntimeException('Username tidak valid.');
+            }
+            
+            if (disconnectMikrotikUser($disconnectUsername)) {
+                setFlash('success', 'Sesi pengguna berhasil diputuskan dari router MikroTik.');
+            } else {
+                setFlash('error', 'Gagal memutuskan sesi. Pastikan API MikroTik sudah dikonfigurasi dan terhubung.');
+            }
         }
     } catch (RuntimeException $e) {
         setFlash('error', $e->getMessage());
@@ -170,13 +181,20 @@ $pageTitle = 'Pengguna Aktif';
                                 <td class="text-nowrap"><?= formatBytes((int)$s['upload_bytes']) ?></td>
                                 <td class="text-nowrap"><?= formatBytes((int)$s['download_bytes']) ?></td>
                                 <td>
-                                    <?php if ($s['user_id']): ?>
-                                    <button type="button" class="btn btn-sm btn-danger" onclick="confirmDeleteUser(<?= $s['user_id'] ?>, '<?= sanitizeInput(addslashes($s['user_name'] ?? $s['username'])) ?>')" title="Hapus Pengguna">
-                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
-                                    </button>
-                                    <?php else: ?>
-                                    -
-                                    <?php endif; ?>
+                                    <div class="btn-group">
+                                        <button type="button" class="btn btn-sm" onclick="confirmDisconnectUser('<?= sanitizeInput(addslashes($s['username'])) ?>', '<?= sanitizeInput(addslashes($s['user_name'] ?? $s['username'])) ?>')" title="Putuskan Sesi (Kick)">
+                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18.36 6.64a9 9 0 1 1-12.73 0"/><line x1="12" y1="2" x2="12" y2="12"/></svg>
+                                        </button>
+                                        <?php if ($s['user_id']): ?>
+                                        <button type="button" class="btn btn-sm btn-danger" onclick="confirmDeleteUser(<?= $s['user_id'] ?>, '<?= sanitizeInput(addslashes($s['user_name'] ?? $s['username'])) ?>')" title="Hapus Pengguna (Permanen)">
+                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                                        </button>
+                                        <?php else: ?>
+                                        <button type="button" class="btn btn-sm btn-danger" disabled style="opacity:0.5;" title="User tidak ada di database">
+                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                                        </button>
+                                        <?php endif; ?>
+                                    </div>
                                 </td>
                             </tr>
                             <?php endforeach; ?>
@@ -218,12 +236,46 @@ $pageTitle = 'Pengguna Aktif';
     </div>
 </div>
 
+<!-- Disconnect Confirmation Modal -->
+<div class="modal-overlay" id="disconnectUserModal">
+    <div class="modal">
+        <div class="modal-header">
+            <h3 class="modal-title">Putuskan Sesi (Kick)</h3>
+            <button class="modal-close" data-modal-close>&times;</button>
+        </div>
+        <div class="modal-body">
+            <div style="text-align:center;margin-bottom:16px;">
+                <div style="width:56px;height:56px;border-radius:50%;background:rgba(245,158,11,0.1);display:inline-flex;align-items:center;justify-content:center;margin-bottom:12px;">
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2"><path d="M18.36 6.64a9 9 0 1 1-12.73 0"/><line x1="12" y1="2" x2="12" y2="12"/></svg>
+                </div>
+                <p style="font-weight:600;font-size:1rem;margin-bottom:4px;">Yakin ingin memutuskan sesi pengguna ini?</p>
+                <p class="text-muted" style="font-size:0.85rem;">User: <strong id="disconnectUserName"></strong></p>
+                <p class="text-muted" style="font-size:0.8rem;margin-top:8px;">Pengguna akan ditendang (kick) dari jaringan hotspot secara langsung, namun akun mereka tidak dihapus dari database.</p>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn" data-modal-close>Batal</button>
+            <form method="POST" id="disconnectUserForm" style="display:inline;">
+                <input type="hidden" name="action" value="disconnect">
+                <input type="hidden" name="username" id="disconnectUserUsername">
+                <input type="hidden" name="csrf_token" value="<?= $csrfToken ?>">
+                <button type="submit" class="btn btn-primary" style="background:#f59e0b;border-color:#f59e0b;">Putuskan Sesi</button>
+            </form>
+        </div>
+    </div>
+</div>
+
 <script src="assets/js/dashboard.js?v=1.2"></script>
 <script>
 function confirmDeleteUser(userId, userName) {
     document.getElementById('deleteUserId').value = userId;
     document.getElementById('deleteUserName').textContent = userName;
     openModal('deleteUserModal');
+}
+function confirmDisconnectUser(username, displayName) {
+    document.getElementById('disconnectUserUsername').value = username;
+    document.getElementById('disconnectUserName').textContent = displayName;
+    openModal('disconnectUserModal');
 }
 </script>
 </body>
