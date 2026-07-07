@@ -12,6 +12,36 @@ requireLogin();
 $admin = getCurrentAdmin();
 
 $db = Database::getInstance();
+$csrfToken = generateCsrfToken();
+
+// Handle POST actions (delete user)
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $action = $_POST['action'] ?? '';
+
+    try {
+        if (!validateCsrfToken($_POST['csrf_token'] ?? '')) {
+            throw new RuntimeException('Token keamanan tidak valid.');
+        }
+
+        if ($action === 'delete') {
+            $deleteId = (int) ($_POST['id'] ?? 0);
+            if ($deleteId <= 0) {
+                throw new RuntimeException('ID pengguna tidak valid.');
+            }
+
+            if (deleteUser($deleteId)) {
+                setFlash('success', 'Pengguna berhasil dihapus beserta semua data terkait.');
+            } else {
+                setFlash('error', 'Gagal menghapus pengguna. Pengguna tidak ditemukan.');
+            }
+        }
+    } catch (RuntimeException $e) {
+        setFlash('error', $e->getMessage());
+    }
+
+    header('Location: users.php' . (!empty($_GET) ? '?' . http_build_query($_GET) : ''));
+    exit;
+}
 
 // Filters
 $filterMethod = $_GET['method'] ?? '';
@@ -191,10 +221,15 @@ $flash = getFlash();
                                     <?= $user['last_login'] ? date('d/m/Y H:i', strtotime($user['last_login'])) : '-' ?>
                                 </td>
                                 <td>
-                                    <a href="user-detail.php?id=<?= $user['id'] ?>" class="btn btn-sm">
-                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
-                                        Detail
-                                    </a>
+                                    <div class="btn-group">
+                                        <a href="user-detail.php?id=<?= $user['id'] ?>" class="btn btn-sm">
+                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                                            Detail
+                                        </a>
+                                        <button type="button" class="btn btn-sm btn-danger" onclick="confirmDeleteUser(<?= $user['id'] ?>, '<?= sanitizeInput(addslashes($user['name'] ?? $user['username_identity'])) ?>')">
+                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                                        </button>
+                                    </div>
                                 </td>
                             </tr>
                             <?php endforeach; ?>
@@ -226,6 +261,42 @@ $flash = getFlash();
     </div>
 </div>
 
+<!-- Delete Confirmation Modal -->
+<div class="modal-overlay" id="deleteUserModal">
+    <div class="modal">
+        <div class="modal-header">
+            <h3 class="modal-title">Hapus Pengguna</h3>
+            <button class="modal-close" data-modal-close>&times;</button>
+        </div>
+        <div class="modal-body">
+            <div style="text-align:center;margin-bottom:16px;">
+                <div style="width:56px;height:56px;border-radius:50%;background:rgba(239,68,68,0.1);display:inline-flex;align-items:center;justify-content:center;margin-bottom:12px;">
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>
+                </div>
+                <p style="font-weight:600;font-size:1rem;margin-bottom:4px;">Yakin ingin menghapus pengguna ini?</p>
+                <p class="text-muted" style="font-size:0.85rem;">User: <strong id="deleteUserName"></strong></p>
+                <p class="text-muted" style="font-size:0.8rem;margin-top:8px;color:#ef4444;">Semua data terkait (sesi, RADIUS, log) akan ikut dihapus secara permanen.</p>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn" data-modal-close>Batal</button>
+            <form method="POST" id="deleteUserForm" style="display:inline;">
+                <input type="hidden" name="action" value="delete">
+                <input type="hidden" name="id" id="deleteUserId">
+                <input type="hidden" name="csrf_token" value="<?= $csrfToken ?>">
+                <button type="submit" class="btn btn-danger">Hapus Pengguna</button>
+            </form>
+        </div>
+    </div>
+</div>
+
 <script src="assets/js/dashboard.js?v=1.2"></script>
+<script>
+function confirmDeleteUser(userId, userName) {
+    document.getElementById('deleteUserId').value = userId;
+    document.getElementById('deleteUserName').textContent = userName;
+    openModal('deleteUserModal');
+}
+</script>
 </body>
 </html>

@@ -345,6 +345,59 @@ function logFreeSession(string $macAddress, string $ipAddress, string $usernameI
 }
 
 /**
+ * Delete a portal user and all related RADIUS data
+ * Removes: users, radcheck, radreply, radacct, radusergroup, radpostauth, free_session_log
+ */
+function deleteUser(int $userId): bool
+{
+    try {
+        $db = Database::getInstance();
+
+        // First, get the username_identity for this user
+        $stmt = $db->prepare('SELECT username_identity FROM users WHERE id = :id');
+        $stmt->execute([':id' => $userId]);
+        $user = $stmt->fetch();
+
+        if (!$user) {
+            return false;
+        }
+
+        $username = $user['username_identity'];
+
+        $db->beginTransaction();
+
+        // Delete from RADIUS tables
+        $tables = ['radcheck', 'radreply', 'radusergroup', 'radpostauth'];
+        foreach ($tables as $table) {
+            $stmt = $db->prepare("DELETE FROM {$table} WHERE username = :username");
+            $stmt->execute([':username' => $username]);
+        }
+
+        // Delete accounting records
+        $stmt = $db->prepare('DELETE FROM radacct WHERE username = :username');
+        $stmt->execute([':username' => $username]);
+
+        // Delete free session logs
+        $stmt = $db->prepare('DELETE FROM free_session_log WHERE username_identity = :username');
+        $stmt->execute([':username' => $username]);
+
+        // Finally delete the user record
+        $stmt = $db->prepare('DELETE FROM users WHERE id = :id');
+        $stmt->execute([':id' => $userId]);
+
+        $db->commit();
+        return true;
+
+    } catch (PDOException $e) {
+        if (isset($db) && $db->inTransaction()) {
+            $db->rollBack();
+        }
+        error_log('deleteUser error: ' . $e->getMessage());
+        return false;
+    }
+}
+
+/**
  * Generate CSRF token
  */
 function generateCsrfToken(): string

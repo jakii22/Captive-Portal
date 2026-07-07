@@ -10,9 +10,31 @@ require_once __DIR__ . '/../includes/functions.php';
 
 requireLogin();
 $admin = getCurrentAdmin();
+$csrfToken = generateCsrfToken();
 
 $userId = (int) ($_GET['id'] ?? 0);
 if ($userId <= 0) {
+    header('Location: users.php');
+    exit;
+}
+
+// Handle POST delete action
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'delete') {
+    try {
+        if (!validateCsrfToken($_POST['csrf_token'] ?? '')) {
+            throw new RuntimeException('Token keamanan tidak valid.');
+        }
+
+        $deleteId = (int) ($_POST['id'] ?? 0);
+        if ($deleteId > 0 && deleteUser($deleteId)) {
+            setFlash('success', 'Pengguna berhasil dihapus beserta semua data terkait.');
+        } else {
+            setFlash('error', 'Gagal menghapus pengguna.');
+        }
+    } catch (RuntimeException $e) {
+        setFlash('error', $e->getMessage());
+    }
+
     header('Location: users.php');
     exit;
 }
@@ -88,7 +110,11 @@ $pageTitle = 'Detail Pengguna';
                 </button>
                 <h2 class="main-header-title"><?= $pageTitle ?></h2>
             </div>
-            <div class="main-header-actions">
+            <div class="main-header-actions" style="display:flex;gap:8px;">
+                <button type="button" class="btn btn-danger" onclick="openModal('deleteUserDetailModal')">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                    Hapus
+                </button>
                 <a href="users.php" class="btn">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
                     Kembali
@@ -219,6 +245,35 @@ $pageTitle = 'Detail Pengguna';
                 </div>
             </div>
         </main>
+    </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div class="modal-overlay" id="deleteUserDetailModal">
+    <div class="modal">
+        <div class="modal-header">
+            <h3 class="modal-title">Hapus Pengguna</h3>
+            <button class="modal-close" data-modal-close>&times;</button>
+        </div>
+        <div class="modal-body">
+            <div style="text-align:center;margin-bottom:16px;">
+                <div style="width:56px;height:56px;border-radius:50%;background:rgba(239,68,68,0.1);display:inline-flex;align-items:center;justify-content:center;margin-bottom:12px;">
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>
+                </div>
+                <p style="font-weight:600;font-size:1rem;margin-bottom:4px;">Yakin ingin menghapus pengguna ini?</p>
+                <p class="text-muted" style="font-size:0.85rem;">User: <strong><?= sanitizeInput($user['name'] ?? $user['username_identity']) ?></strong></p>
+                <p class="text-muted" style="font-size:0.8rem;margin-top:8px;color:#ef4444;">Semua data terkait (sesi, RADIUS, log) akan ikut dihapus secara permanen.</p>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn" data-modal-close>Batal</button>
+            <form method="POST" style="display:inline;">
+                <input type="hidden" name="action" value="delete">
+                <input type="hidden" name="id" value="<?= $user['id'] ?>">
+                <input type="hidden" name="csrf_token" value="<?= $csrfToken ?>">
+                <button type="submit" class="btn btn-danger">Hapus Pengguna</button>
+            </form>
+        </div>
     </div>
 </div>
 
