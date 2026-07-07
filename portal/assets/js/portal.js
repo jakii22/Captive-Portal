@@ -7,7 +7,34 @@ document.addEventListener('DOMContentLoaded', () => {
     initLoadingOverlay();
     initAdCarousel();
     initSessionTimer();
+    initCnaWorkaround();
 });
+
+/**
+ * Workaround for Android Captive Network Assistant (CNA)
+ * Google OAuth blocks sign-ins inside WebViews. We force open in Chrome via Intent.
+ */
+function initCnaWorkaround() {
+    const isAndroid = /Android/i.test(navigator.userAgent);
+    const isWebView = /(Version\/\d+.*\bChrome\b|\b[A-Z][a-z]+WebView\b|; wv\b)/i.test(navigator.userAgent);
+
+    if (isAndroid && isWebView) {
+        ['btn-google', 'btn-facebook'].forEach(id => {
+            const btn = document.getElementById(id);
+            if (btn) {
+                btn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    // Hentikan loading overlay karena kita akan melompat ke browser Chrome
+                    document.getElementById('loadingOverlay')?.classList.remove('active');
+                    
+                    const urlWithoutProtocol = this.href.replace(/^https?:\/\//, '');
+                    const intentUrl = 'intent://' + urlWithoutProtocol + '#Intent;scheme=https;package=com.android.chrome;end;';
+                    window.location.href = intentUrl;
+                });
+            }
+        });
+    }
+}
 
 /**
  * Theme Toggle (Light/Dark Mode)
