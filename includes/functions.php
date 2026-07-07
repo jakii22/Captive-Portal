@@ -512,18 +512,35 @@ function disconnectMikrotikUser(string $username): bool
             '?user' => $username,
         ]);
 
-        if (empty($activeSessions)) {
+        // Find MAC cookies by user
+        $cookies = $api->comm('/ip/hotspot/cookie/print', [
+            '?user' => $username,
+        ]);
+
+        if (empty($activeSessions) && empty($cookies)) {
             $api->disconnect();
             // FreeRADIUS radacct sometimes has stale sessions. 
-            // If it's not in MikroTik, we can consider it already disconnected.
+            // If it's not in MikroTik (active or cookie), we can consider it already disconnected.
             return false;
         }
 
         $success = false;
+        
+        // Remove active sessions
         foreach ($activeSessions as $session) {
             if (isset($session['.id'])) {
                 $api->comm('/ip/hotspot/active/remove', [
                     '.id' => $session['.id']
+                ]);
+                $success = true;
+            }
+        }
+
+        // Remove MAC cookies so they don't auto-login again
+        foreach ($cookies as $cookie) {
+            if (isset($cookie['.id'])) {
+                $api->comm('/ip/hotspot/cookie/remove', [
+                    '.id' => $cookie['.id']
                 ]);
                 $success = true;
             }
