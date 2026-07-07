@@ -482,6 +482,7 @@ function getPagination(int $totalItems, int $perPage = 20, int $currentPage = 1)
 
 /**
  * Disconnect a user from MikroTik active hotspot sessions
+ * @throws RuntimeException if fails
  */
 function disconnectMikrotikUser(string $username): bool
 {
@@ -491,7 +492,7 @@ function disconnectMikrotikUser(string $username): bool
     $mtPort     = getSetting('mikrotik_port', '8728');
 
     if (empty($mtIp) || empty($mtUsername)) {
-        return false; // Not configured
+        throw new RuntimeException("Konfigurasi API MikroTik belum diisi.");
     }
 
     require_once __DIR__ . '/RouterOS/RouterosAPI.php';
@@ -501,28 +502,37 @@ function disconnectMikrotikUser(string $username): bool
         $api->setPort((int) $mtPort);
         $api->setAttempts(1);
 
-        if ($api->connect($mtIp, $mtUsername, $mtPassword)) {
-            // Find active session by user
-            $activeSessions = $api->comm('/ip/hotspot/active/print', [
-                '?user' => $username,
-            ]);
-
-            $success = false;
-            foreach ($activeSessions as $session) {
-                if (isset($session['.id'])) {
-                    $api->comm('/ip/hotspot/active/remove', [
-                        '.id' => $session['.id']
-                    ]);
-                    $success = true;
-                }
-            }
-            
-            $api->disconnect();
-            return $success;
+        if (!$api->connect($mtIp, $mtUsername, $mtPassword)) {
+            $error = $api->getError() ?: 'Timeout/Connection Refused';
+            throw new RuntimeException("Koneksi API gagal: " . $error);
         }
+
+        // Find active session by user
+        $activeSessions = $api->comm('/ip/hotspot/active/print', [
+            '?user' => $username,
+        ]);
+
+        if (empty($activeSessions)) {
+            $api->disconnect();
+            // FreeRADIUS radacct sometimes has stale sessions. 
+            // If it's not in MikroTik, we can consider it already disconnected.
+            return false;
+        }
+
+        $success = false;
+        foreach ($activeSessions as $session) {
+            if (isset($session['.id'])) {
+                $api->comm('/ip/hotspot/active/remove', [
+                    '.id' => $session['.id']
+                ]);
+                $success = true;
+            }
+        }
+        
+        $api->disconnect();
+        return $success;
+
     } catch (Exception $e) {
-        error_log('MikroTik Disconnect Error: ' . $e->getMessage());
+        throw new RuntimeException("Error RouterOS API: " . $e->getMessage());
     }
-    
-    return false;
 }
