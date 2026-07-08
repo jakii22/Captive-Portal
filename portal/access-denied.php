@@ -6,7 +6,7 @@
     <meta name="robots" content="noindex, nofollow">
     <title>Akses Tidak Diizinkan</title>
     <style>
-        :root {
+        :root, [data-theme="light"] {
             --bg-gradient: linear-gradient(135deg, #f6f8fd, #f1f5f9, #e2e8f0);
             --text-main: #1e293b;
             --text-muted: #64748b;
@@ -31,31 +31,29 @@
             --badge-color: #ef4444;
         }
 
-        @media (prefers-color-scheme: dark) {
-            :root {
-                --bg-gradient: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
-                --text-main: #ffffff;
-                --text-muted: rgba(255, 255, 255, 0.7);
-                --text-subtle: rgba(255, 255, 255, 0.4);
-                
-                --card-bg: rgba(255, 255, 255, 0.07);
-                --card-border: rgba(255, 255, 255, 0.12);
-                --card-shadow: 0 24px 64px rgba(0, 0, 0, 0.4);
-                
-                --icon-bg: rgba(239, 68, 68, 0.15);
-                --icon-border: rgba(239, 68, 68, 0.4);
-                --icon-stroke: #f87171;
-                
-                --divider: rgba(255, 255, 255, 0.1);
-                
-                --step-bg: rgba(124, 58, 237, 0.3);
-                --step-border: rgba(124, 58, 237, 0.5);
-                --step-color: #a78bfa;
-                
-                --badge-bg: rgba(239, 68, 68, 0.15);
-                --badge-border: rgba(239, 68, 68, 0.3);
-                --badge-color: #f87171;
-            }
+        [data-theme="dark"] {
+            --bg-gradient: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+            --text-main: #ffffff;
+            --text-muted: rgba(255, 255, 255, 0.7);
+            --text-subtle: rgba(255, 255, 255, 0.4);
+            
+            --card-bg: rgba(255, 255, 255, 0.07);
+            --card-border: rgba(255, 255, 255, 0.12);
+            --card-shadow: 0 24px 64px rgba(0, 0, 0, 0.4);
+            
+            --icon-bg: rgba(239, 68, 68, 0.15);
+            --icon-border: rgba(239, 68, 68, 0.4);
+            --icon-stroke: #f87171;
+            
+            --divider: rgba(255, 255, 255, 0.1);
+            
+            --step-bg: rgba(124, 58, 237, 0.3);
+            --step-border: rgba(124, 58, 237, 0.5);
+            --step-color: #a78bfa;
+            
+            --badge-bg: rgba(239, 68, 68, 0.15);
+            --badge-border: rgba(239, 68, 68, 0.3);
+            --badge-color: #f87171;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -181,9 +179,73 @@
             border-radius: 20px;
             margin-bottom: 20px;
         }
+
+        .theme-toggle {
+            position: absolute;
+            top: 24px;
+            right: 24px;
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            color: var(--text-main);
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            transition: all 0.2s;
+            z-index: 100;
+        }
+
+        .theme-toggle:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+        }
+
+        .theme-toggle svg {
+            width: 20px;
+            height: 20px;
+            stroke: currentColor;
+            fill: none;
+            stroke-width: 2;
+        }
+        
+        /* Show sun icon in dark mode */
+        [data-theme="dark"] .icon-moon { display: none; }
+        [data-theme="dark"] .icon-sun { display: block; }
+        
+        /* Show moon icon in light mode */
+        :root:not([data-theme="dark"]) .icon-sun,
+        [data-theme="light"] .icon-sun { display: none; }
+        
+        :root:not([data-theme="dark"]) .icon-moon,
+        [data-theme="light"] .icon-moon { display: block; }
     </style>
+    <script>
+        // Init theme early to prevent flash
+        const savedTheme = localStorage.getItem('portal_theme') || 'light';
+        document.documentElement.setAttribute('data-theme', savedTheme);
+    </script>
 </head>
 <body>
+    <button class="theme-toggle" id="themeToggle" aria-label="Toggle Theme">
+        <svg class="icon-moon" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+        </svg>
+        <svg class="icon-sun" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="5"></circle>
+            <line x1="12" y1="1" x2="12" y2="3"></line>
+            <line x1="12" y1="21" x2="12" y2="23"></line>
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+            <line x1="1" y1="12" x2="3" y2="12"></line>
+            <line x1="21" y1="12" x2="23" y2="12"></line>
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+        </svg>
+    </button>
     <div class="card">
         <div class="icon">
             <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -215,5 +277,14 @@
             </div>
         </div>
     </div>
+    
+    <script>
+        document.getElementById('themeToggle').addEventListener('click', () => {
+            const current = document.documentElement.getAttribute('data-theme');
+            const nextTheme = current === 'dark' ? 'light' : 'dark';
+            document.documentElement.setAttribute('data-theme', nextTheme);
+            localStorage.setItem('portal_theme', nextTheme);
+        });
+    </script>
 </body>
 </html>
