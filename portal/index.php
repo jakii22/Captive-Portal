@@ -137,11 +137,7 @@ $ads = getActiveAds();
                     <?php endforeach; ?>
                 </div>
                 <?php if (count($ads) > 1): ?>
-                <div class="ad-carousel-dots">
-                    <?php foreach ($ads as $index => $ad): ?>
-                    <button class="ad-carousel-dot <?= $index === 0 ? 'active' : '' ?>" aria-label="Go to slide <?= $index + 1 ?>"></button>
-                    <?php endforeach; ?>
-                </div>
+                <div class="ad-dots"></div>
                 <?php endif; ?>
             </div>
         </div> <!-- End of Left Pane -->
