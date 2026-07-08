@@ -6,6 +6,58 @@
     <meta name="robots" content="noindex, nofollow">
     <title>Akses Tidak Diizinkan</title>
     <style>
+        :root {
+            --bg-gradient: linear-gradient(135deg, #f6f8fd, #f1f5f9, #e2e8f0);
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --text-subtle: #94a3b8;
+            
+            --card-bg: rgba(255, 255, 255, 0.95);
+            --card-border: rgba(0, 0, 0, 0.05);
+            --card-shadow: 0 24px 64px rgba(0, 0, 0, 0.06);
+            
+            --icon-bg: rgba(239, 68, 68, 0.1);
+            --icon-border: rgba(239, 68, 68, 0.2);
+            --icon-stroke: #ef4444;
+            
+            --divider: rgba(0, 0, 0, 0.08);
+            
+            --step-bg: rgba(124, 58, 237, 0.1);
+            --step-border: rgba(124, 58, 237, 0.2);
+            --step-color: #7c3aed;
+            
+            --badge-bg: rgba(239, 68, 68, 0.1);
+            --badge-border: rgba(239, 68, 68, 0.2);
+            --badge-color: #ef4444;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg-gradient: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+                --text-main: #ffffff;
+                --text-muted: rgba(255, 255, 255, 0.7);
+                --text-subtle: rgba(255, 255, 255, 0.4);
+                
+                --card-bg: rgba(255, 255, 255, 0.07);
+                --card-border: rgba(255, 255, 255, 0.12);
+                --card-shadow: 0 24px 64px rgba(0, 0, 0, 0.4);
+                
+                --icon-bg: rgba(239, 68, 68, 0.15);
+                --icon-border: rgba(239, 68, 68, 0.4);
+                --icon-stroke: #f87171;
+                
+                --divider: rgba(255, 255, 255, 0.1);
+                
+                --step-bg: rgba(124, 58, 237, 0.3);
+                --step-border: rgba(124, 58, 237, 0.5);
+                --step-color: #a78bfa;
+                
+                --badge-bg: rgba(239, 68, 68, 0.15);
+                --badge-border: rgba(239, 68, 68, 0.3);
+                --badge-color: #f87171;
+            }
+        }
+
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
@@ -13,29 +65,30 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+            background: var(--bg-gradient);
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            color: #fff;
+            color: var(--text-main);
             padding: 20px;
         }
 
         .card {
-            background: rgba(255, 255, 255, 0.07);
-            border: 1px solid rgba(255, 255, 255, 0.12);
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
             border-radius: 20px;
             padding: 48px 40px;
             max-width: 440px;
             width: 100%;
             text-align: center;
             backdrop-filter: blur(16px);
-            box-shadow: 0 24px 64px rgba(0, 0, 0, 0.4);
+            -webkit-backdrop-filter: blur(16px);
+            box-shadow: var(--card-shadow);
         }
 
         .icon {
             width: 72px;
             height: 72px;
-            background: rgba(239, 68, 68, 0.15);
-            border: 2px solid rgba(239, 68, 68, 0.4);
+            background: var(--icon-bg);
+            border: 2px solid var(--icon-border);
             border-radius: 50%;
             display: flex;
             align-items: center;
@@ -46,26 +99,26 @@
         .icon svg {
             width: 36px;
             height: 36px;
-            stroke: #f87171;
+            stroke: var(--icon-stroke);
         }
 
         h1 {
             font-size: 1.5rem;
             font-weight: 700;
             margin-bottom: 12px;
-            color: #fff;
+            color: var(--text-main);
         }
 
         p {
             font-size: 0.95rem;
             line-height: 1.7;
-            color: rgba(255, 255, 255, 0.65);
+            color: var(--text-muted);
             margin-bottom: 8px;
         }
 
         .divider {
             border: none;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            border-top: 1px solid var(--divider);
             margin: 28px 0;
         }
 
@@ -74,7 +127,7 @@
             font-weight: 600;
             text-transform: uppercase;
             letter-spacing: 0.08em;
-            color: rgba(255, 255, 255, 0.4);
+            color: var(--text-subtle);
             margin-bottom: 16px;
         }
 
@@ -95,29 +148,33 @@
             width: 26px;
             height: 26px;
             min-width: 26px;
-            background: rgba(124, 58, 237, 0.3);
-            border: 1px solid rgba(124, 58, 237, 0.5);
+            background: var(--step-bg);
+            border: 1px solid var(--step-border);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 0.75rem;
             font-weight: 700;
-            color: #a78bfa;
+            color: var(--step-color);
             margin-top: 1px;
         }
 
         .step-text {
             font-size: 0.875rem;
-            color: rgba(255, 255, 255, 0.7);
+            color: var(--text-muted);
             line-height: 1.5;
+        }
+        
+        .step-text strong {
+            color: var(--text-main);
         }
 
         .badge {
             display: inline-block;
-            background: rgba(239, 68, 68, 0.15);
-            border: 1px solid rgba(239, 68, 68, 0.3);
-            color: #f87171;
+            background: var(--badge-bg);
+            border: 1px solid var(--badge-border);
+            color: var(--badge-color);
             font-size: 0.75rem;
             font-weight: 600;
             padding: 4px 12px;
@@ -146,11 +203,11 @@
         <div class="steps">
             <div class="step">
                 <div class="step-num">1</div>
-                <div class="step-text">Sambungkan perangkatmu ke jaringan <strong style="color:#fff">Wi-Fi Hotspot</strong></div>
+                <div class="step-text">Sambungkan perangkatmu ke jaringan <strong>Wi-Fi Hotspot</strong></div>
             </div>
             <div class="step">
                 <div class="step-num">2</div>
-                <div class="step-text">Buka browser dan akses sembarang website — halaman login akan <strong style="color:#fff">muncul otomatis</strong></div>
+                <div class="step-text">Buka browser dan akses sembarang website — halaman login akan <strong>muncul otomatis</strong></div>
             </div>
             <div class="step">
                 <div class="step-num">3</div>
