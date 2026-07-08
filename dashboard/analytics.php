@@ -161,7 +161,6 @@ $pageTitle = 'Analytics & Demografi';
             display: grid;
             grid-template-columns: 56px repeat(24, 1fr);
             gap: 2px;
-            min-width: 500px;
         }
         .heatmap-label {
             font-size: 0.7rem;
@@ -182,8 +181,6 @@ $pageTitle = 'Analytics & Demografi';
         .heatmap-cell {
             aspect-ratio: 1;
             border-radius: 4px;
-            min-width: 12px;
-            min-height: 12px;
             cursor: pointer;
             transition: transform 0.15s, box-shadow 0.15s;
             position: relative;
@@ -324,7 +321,7 @@ $pageTitle = 'Analytics & Demografi';
                             <!-- Header row (hours) -->
                             <div></div>
                             <?php for ($h = 0; $h < 24; $h++): ?>
-                            <div class="heatmap-label-top"><?= str_pad($h, 2, '0', STR_PAD_LEFT) ?></div>
+                            <div class="heatmap-label-top"><?= str_pad($h + 1, 2, '0', STR_PAD_LEFT) ?></div>
                             <?php endfor; ?>
 
                             <!-- Data rows -->
@@ -346,7 +343,7 @@ $pageTitle = 'Analytics & Demografi';
                                     $color = 'rgba(124, 58, 237, 0.9)';
                                 }
                                 
-                                $tooltip = $dayNames[$d] . ' ' . str_pad($h, 2, '0', STR_PAD_LEFT) . ':00 — ' . $count . ' sesi';
+                                $tooltip = $dayNames[$d] . ' Jam ke-' . ($h + 1) . ' (' . str_pad($h, 2, '0', STR_PAD_LEFT) . ':00) — ' . $count . ' sesi';
                             ?>
                             <div class="heatmap-cell" style="background:<?= $color ?>" data-tooltip="<?= $tooltip ?>"></div>
                             <?php endfor; ?>
