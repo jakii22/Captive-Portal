@@ -159,10 +159,32 @@ function initFileUpload() {
 
         input.addEventListener('change', () => {
             if (input.files.length > 0) {
-                const fileName = input.files[0].name;
-                const fileSize = formatFileSize(input.files[0].size);
+                const file = input.files[0];
+                const fileName = file.name;
+                const fileSize = formatFileSize(file.size);
+                
+                // Find or create elements
                 const p = zone.querySelector('p');
                 if (p) p.textContent = `${fileName} (${fileSize})`;
+                
+                if (file.type.startsWith('image/')) {
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        let img = zone.querySelector('.preview-image');
+                        if (!img) {
+                            img = document.createElement('img');
+                            img.className = 'preview-image';
+                            img.style.cssText = 'max-height: 150px; border-radius: 8px; margin-bottom: 12px; object-fit: contain; max-width: 100%; display: block; margin-left: auto; margin-right: auto;';
+                            zone.insertBefore(img, zone.firstChild);
+                        }
+                        img.src = e.target.result;
+                        
+                        // Hide SVG icon if exists
+                        const svg = zone.querySelector('svg');
+                        if (svg) svg.style.display = 'none';
+                    };
+                    reader.readAsDataURL(file);
+                }
             }
         });
     });
