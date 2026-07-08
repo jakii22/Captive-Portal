@@ -96,13 +96,10 @@ $siteName = getSetting('site_name', APP_NAME);
     <div class="portal-container">
         <!-- Brand -->
         <div class="portal-brand">
-            <div class="portal-logo">
-                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z" stroke-opacity="0.3"/>
-                    <path d="M8.5 8.5a5 5 0 0 1 7 0" stroke-linecap="round"/>
-                    <path d="M6 6a9 9 0 0 1 12 0" stroke-linecap="round" stroke-opacity="0.5"/>
-                    <circle cx="12" cy="14" r="2" fill="currentColor" stroke="none"/>
-                </svg>
+            <div class="portal-logos" style="display: flex; align-items: center; justify-content: center; gap: 20px; margin-bottom: 24px;">
+                <img src="assets/img/okenet.png" alt="Okenet" style="height: 42px; width: auto; object-fit: contain;">
+                <span style="color: var(--text-muted); opacity: 0.5; font-size: 1.2rem;">&times;</span>
+                <img src="assets/img/komdigi.svg" alt="Komdigi" style="height: 48px; width: auto; object-fit: contain;">
             </div>
             <h1><?= sanitizeInput($siteName) ?></h1>
             <p>Terhubung ke internet dengan mudah</p>
@@ -169,7 +166,7 @@ $siteName = getSetting('site_name', APP_NAME);
         <!-- Footer -->
         <div class="portal-footer">
             <p>Dengan melanjutkan, Anda menyetujui <a href="#">Syarat & Ketentuan</a> kami.</p>
-            <p style="margin-top: 8px; opacity: 0.5;">© <?= date('Y') ?> <?= sanitizeInput($siteName) ?></p>
+            <p style="margin-top: 8px; opacity: 0.5;">© <?= date('Y') ?> Okenet Hotspot</p>
         </div>
     </div>
 
