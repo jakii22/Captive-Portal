@@ -118,6 +118,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     setSetting('portal_custom_logo_url', '');
                 }
 
+                setFlash('success', 'Tampilan portal berhasil diperbarui.');
+                header('Location: index.php');
+                exit;
             } elseif ($section === 'database_restore') {
                 if (empty($_FILES['backup_file']['name']) || $_FILES['backup_file']['error'] !== UPLOAD_ERR_OK) {
                     throw new RuntimeException('File backup tidak valid atau tidak dipilih.');
