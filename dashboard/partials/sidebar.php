@@ -9,10 +9,22 @@ $admin = $admin ?? getCurrentAdmin();
 <aside class="sidebar" id="sidebar">
     <a href="index.php" class="sidebar-brand" style="text-decoration:none; color:inherit;">
         <div class="sidebar-brand-logo">
-            <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <svg viewBox="0 0 500 500" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                    <clipPath id="circleClip">
+                        <circle cx="250" cy="250" r="250" />
+                    </clipPath>
+                </defs>
+                <g clip-path="url(#circleClip)">
+                    <rect width="500" height="500" fill="#1a8dff" />
+                    <polygon points="140,300 -100,400 -100,600 300,600" fill="#94f394" />
+                    <line x1="-100" y1="403" x2="600" y2="103" stroke="#ffffff" stroke-width="45" />
+                    <line x1="15" y1="-100" x2="233" y2="600" stroke="#ffffff" stroke-width="45" />
+                </g>
+            </svg>
         </div>
         <div>
-            <div class="sidebar-brand-text">Admin Panel</div>
+            <div class="sidebar-brand-text">Okenet Hotspot</div>
             <div class="sidebar-brand-sub">Captive Portal</div>
         </div>
     </a>
