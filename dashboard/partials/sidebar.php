@@ -4,6 +4,7 @@
  * Expects: $currentPage, $admin
  */
 $currentPage = $currentPage ?? '';
+$currentTab = $currentTab ?? '';
 $admin = $admin ?? getCurrentAdmin();
 ?>
 <aside class="sidebar" id="sidebar">
@@ -77,23 +78,23 @@ $admin = $admin ?? getCurrentAdmin();
                 <svg class="sidebar-dropdown-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
             </button>
             <div class="sidebar-dropdown-menu">
-                <a href="settings.php#general" class="sidebar-sublink <?= $currentPage === 'settings' ? 'active' : '' ?>">
+                <a href="settings.php?tab=general" class="sidebar-sublink <?= ($currentPage === 'settings' && $currentTab === 'general') ? 'active' : '' ?>">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4"/></svg>
                     Pengaturan Umum
                 </a>
-                <a href="settings.php#mikrotik" class="sidebar-sublink">
+                <a href="settings.php?tab=mikrotik" class="sidebar-sublink <?= ($currentPage === 'settings' && $currentTab === 'mikrotik') ? 'active' : '' ?>">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="8" rx="2" ry="2"/><rect x="2" y="14" width="20" height="8" rx="2" ry="2"/><line x1="6" y1="6" x2="6.01" y2="6"/><line x1="6" y1="18" x2="6.01" y2="18"/></svg>
                     MikroTik API
                 </a>
-                <a href="settings.php#google" class="sidebar-sublink">
+                <a href="settings.php?tab=google" class="sidebar-sublink <?= ($currentPage === 'settings' && $currentTab === 'google') ? 'active' : '' ?>">
                     <svg viewBox="0 0 24 24" style="stroke:none;"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="currentColor" opacity="0.7"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="currentColor" opacity="0.5"/></svg>
                     Google OAuth
                 </a>
-                <a href="settings.php#facebook" class="sidebar-sublink">
+                <a href="settings.php?tab=facebook" class="sidebar-sublink <?= ($currentPage === 'settings' && $currentTab === 'facebook') ? 'active' : '' ?>">
                     <svg viewBox="0 0 24 24" fill="currentColor" opacity="0.7" style="stroke:none;"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
                     Facebook OAuth
                 </a>
-                <a href="settings.php#appearance" class="sidebar-sublink">
+                <a href="settings.php?tab=appearance" class="sidebar-sublink <?= ($currentPage === 'settings' && $currentTab === 'appearance') ? 'active' : '' ?>">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
                     Tampilan Portal
                 </a>

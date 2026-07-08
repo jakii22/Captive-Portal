@@ -12,6 +12,7 @@ require_once __DIR__ . '/../includes/RouterOS/RouterosAPI.php';
 requireLogin();
 requireRole('full');
 $admin = getCurrentAdmin();
+$currentTab = $_GET['tab'] ?? 'general';
 
 // Handle form submission
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -91,7 +92,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 
-    header('Location: settings.php');
+    header('Location: settings.php?tab=' . urlencode($section ?? 'general'));
     exit;
 }
 
@@ -211,9 +212,7 @@ $pageTitle = 'Settings';
             </div>
             <?php endif; ?>
 
-            <div class="grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
-                <!-- Left Column -->
-                <div>
+            <?php if ($currentTab === 'general'): ?>
                     <!-- General Settings -->
                     <div class="card mb-6" id="general">
                         <div class="card-header">
@@ -254,7 +253,9 @@ $pageTitle = 'Settings';
                             </form>
                         </div>
                     </div>
+            <?php endif; ?>
 
+            <?php if ($currentTab === 'mikrotik'): ?>
                     <!-- MikroTik API Config -->
                     <div class="card" id="mikrotik">
                         <div class="card-header">
@@ -290,10 +291,9 @@ $pageTitle = 'Settings';
                             </form>
                         </div>
                     </div>
-                </div>
+            <?php endif; ?>
 
-                <!-- Right Column -->
-                <div>
+            <?php if ($currentTab === 'google'): ?>
                     <!-- Google API -->
                     <div class="card mb-6" id="google">
                         <div class="card-header">
@@ -334,7 +334,9 @@ $pageTitle = 'Settings';
                             </form>
                         </div>
                     </div>
+            <?php endif; ?>
 
+            <?php if ($currentTab === 'facebook'): ?>
                     <!-- Facebook API -->
                     <div class="card" id="facebook">
                         <div class="card-header">
@@ -372,9 +374,9 @@ $pageTitle = 'Settings';
                             </form>
                         </div>
                     </div>
-                </div>
-            </div>
+            <?php endif; ?>
 
+            <?php if ($currentTab === 'appearance'): ?>
             <!-- Portal Appearance (Full Width) -->
             <div class="card mt-6" id="appearance">
                 <div class="card-header">
@@ -483,7 +485,9 @@ $pageTitle = 'Settings';
                     </form>
                 </div>
             </div>
+            <?php endif; ?>
 
+            <?php if ($currentTab === 'mikrotik'): ?>
             <!-- Router Status (Full Width) -->
             <div class="card mt-6">
                 <div class="card-header">

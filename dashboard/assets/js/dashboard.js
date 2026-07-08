@@ -61,16 +61,6 @@ function initSidebar() {
             if (dropdown) dropdown.classList.toggle('open');
         });
     });
-
-    // Scroll to section on hash (for settings sub-links)
-    if (window.location.hash) {
-        const target = document.getElementById(window.location.hash.substring(1));
-        if (target) {
-            setTimeout(() => {
-                target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            }, 200);
-        }
-    }
 }
 
 /* ── Modal System ── */
