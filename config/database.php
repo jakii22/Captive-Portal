@@ -21,6 +21,21 @@ class Database
     private function __construct() {}
 
     /**
+     * Get database credentials (used by backup/restore utility)
+     */
+    public static function getCredentials(): array
+    {
+        return [
+            'host' => self::DB_HOST,
+            'port' => self::DB_PORT,
+            'name' => self::DB_NAME,
+            'user' => self::DB_USER,
+            'pass' => self::DB_PASS,
+        ];
+    }
+
+
+    /**
      * Get PDO instance (singleton)
      */
     public static function getInstance(): PDO

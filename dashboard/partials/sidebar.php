@@ -98,6 +98,10 @@ $admin = $admin ?? getCurrentAdmin();
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
                     Tampilan Portal
                 </a>
+                <a href="settings.php?tab=database" class="sidebar-sublink <?= ($currentPage === 'settings' && $currentTab === 'database') ? 'active' : '' ?>">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/><path d="M3 12c0 1.66 4 3 9 3s9-1.34 9-3"/></svg>
+                    Backup & Restore
+                </a>
             </div>
         </div>
 

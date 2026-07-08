@@ -14,6 +14,40 @@ requireRole('full');
 $admin = getCurrentAdmin();
 $currentTab = $_GET['tab'] ?? 'general';
 
+// Handle database backup download
+if (isset($_GET['action']) && $_GET['action'] === 'backup') {
+    if (!validateCsrfToken($_GET['csrf_token'] ?? '')) {
+        setFlash('error', 'Token keamanan tidak valid.');
+        header('Location: settings.php?tab=database');
+        exit;
+    }
+
+    try {
+        $creds = Database::getCredentials();
+        
+        // Clean outputs buffer to ensure no PHP whitespace/warning is pre-pended
+        if (ob_get_level()) ob_end_clean();
+        
+        header('Content-Type: application/octet-stream');
+        header('Content-Disposition: attachment; filename="backup_captive_portal_' . date('Y-m-d_H-i-s') . '.sql"');
+        
+        putenv("PGPASSWORD=" . $creds['pass']);
+        $cmd = sprintf(
+            'pg_dump -h %s -p %s -U %s -d %s',
+            escapeshellarg($creds['host']),
+            escapeshellarg($creds['port']),
+            escapeshellarg($creds['user']),
+            escapeshellarg($creds['name'])
+        );
+        passthru($cmd);
+        exit;
+    } catch (Exception $e) {
+        setFlash('error', 'Gagal memproses backup: ' . $e->getMessage());
+        header('Location: settings.php?tab=database');
+        exit;
+    }
+}
+
 // Handle form submission
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (!validateCsrfToken($_POST['csrf_token'] ?? '')) {
@@ -84,7 +118,40 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     setSetting('portal_custom_logo_url', '');
                 }
 
-                setFlash('success', 'Tampilan portal berhasil diperbarui.');
+            } elseif ($section === 'database_restore') {
+                if (empty($_FILES['backup_file']['name']) || $_FILES['backup_file']['error'] !== UPLOAD_ERR_OK) {
+                    throw new RuntimeException('File backup tidak valid atau tidak dipilih.');
+                }
+
+                $file = $_FILES['backup_file'];
+                $ext = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
+                if ($ext !== 'sql') {
+                    throw new RuntimeException('Format file harus berupa .sql');
+                }
+
+                $creds = Database::getCredentials();
+                putenv("PGPASSWORD=" . $creds['pass']);
+
+                // Run psql command to restore database
+                $cmd = sprintf(
+                    'psql -h %s -p %s -U %s -d %s -f %s 2>&1',
+                    escapeshellarg($creds['host']),
+                    escapeshellarg($creds['port']),
+                    escapeshellarg($creds['user']),
+                    escapeshellarg($creds['name']),
+                    escapeshellarg($file['tmp_name'])
+                );
+
+                exec($cmd, $output, $returnVar);
+
+                if ($returnVar !== 0) {
+                    $errorMsg = implode("\n", $output);
+                    error_log("Database Restore Error: " . $errorMsg);
+                    throw new RuntimeException('Restore gagal: ' . substr($errorMsg, 0, 200));
+                }
+
+                setFlash('success', 'Database berhasil dipulihkan!');
+                $section = 'database';
             }
         } catch (Exception $e) {
             error_log('Config Error: ' . $e->getMessage());
@@ -591,6 +658,48 @@ $pageTitle = 'Settings';
                             <?php endif; ?>
                         </tbody>
                     </table>
+                </div>
+            </div>
+            <?php endif; ?>
+
+            <?php if ($currentTab === 'database'): ?>
+            <!-- Database Backup & Restore -->
+            <div class="card mb-6" id="database">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:-3px;margin-right:6px;"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/><path d="M3 12c0 1.66 4 3 9 3s9-1.34 9-3"/></svg>
+                        Backup & Restore Database
+                    </h3>
+                </div>
+                <div class="card-body">
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;">
+                        <!-- Left: Backup -->
+                        <div>
+                            <h4 style="font-size:1.1rem;font-weight:600;margin-bottom:12px;">Cadangkan Database (Backup)</h4>
+                            <p style="font-size:0.875rem;color:var(--text-muted);line-height:1.6;margin-bottom:20px;">Unduh seluruh data database saat ini (akun admin, data pengguna, log hotspot, dan iklan) ke komputer Anda.</p>
+                            <a href="settings.php?action=backup&csrf_token=<?= $csrfToken ?>" class="btn btn-primary" style="display:inline-flex;align-items:center;gap:8px;">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                                Unduh Backup Database (.sql)
+                            </a>
+                        </div>
+                        
+                        <!-- Right: Restore -->
+                        <div style="border-left:1px solid var(--glass-border);padding-left:24px;">
+                            <h4 style="font-size:1.1rem;font-weight:600;margin-bottom:12px;">Pulihkan Database (Restore)</h4>
+                            <p style="font-size:0.875rem;color:var(--text-muted);line-height:1.6;margin-bottom:20px;">Ganti data saat ini dengan mengunggah file hasil cadangan database (.sql) sebelumnya.</p>
+                            <form method="POST" enctype="multipart/form-data" onsubmit="return confirm('Peringatan: Pemulihan database akan menimpa seluruh data yang ada saat ini. Apakah Anda yakin?')">
+                                <input type="hidden" name="section" value="database_restore">
+                                <input type="hidden" name="csrf_token" value="<?= $csrfToken ?>">
+                                <div class="form-group" style="margin-bottom:16px;">
+                                    <input type="file" name="backup_file" accept=".sql" class="form-input" required style="padding:8px;">
+                                </div>
+                                <button type="submit" class="btn btn-primary" style="background:#f43f5e;border-color:#f43f5e;display:inline-flex;align-items:center;gap:8px;">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                                    Mulai Restore Database
+                                </button>
+                            </form>
+                        </div>
+                    </div>
                 </div>
             </div>
             <?php endif; ?>
