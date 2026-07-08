@@ -22,7 +22,7 @@ $hasMikrotikRedirect = !empty($mac) || !empty($ip) || !empty($linkOrig);
 $hasActiveSession    = !empty($_SESSION['portal_mac']) || !empty($_SESSION['portal_ip']);
 $hasErrorRedirect    = isset($_GET['error']); // MikroTik bisa redirect balik dengan error
 
-if (!$hasMikrotikRedirect && !$hasActiveSession && !$hasErrorRedirect) {
+if (!$hasMikrotikRedirect && !$hasActiveSession && !$hasErrorRedirect && getSetting('dev_mode') !== '1') {
     http_response_code(403);
     require __DIR__ . '/access-denied.php';
     exit;

@@ -11,7 +11,7 @@ session_start();
 
 // ── Hotspot Access Guard ──────────────────────────────────────────────────────
 // Halaman ini hanya bisa diakses setelah login berhasil melalui hotspot.
-if (empty($_SESSION['login_success'])) {
+if (empty($_SESSION['login_success']) && getSetting('dev_mode') !== '1') {
     http_response_code(403);
     require __DIR__ . '/access-denied.php';
     exit;

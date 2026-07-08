@@ -35,6 +35,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 setSetting('site_name', trim($_POST['site_name'] ?? ''));
                 setSetting('hotspot_login_url', trim($_POST['hotspot_login_url'] ?? ''));
                 setSetting('free_session_limit_seconds', trim($_POST['free_session_limit'] ?? '3600'));
+                setSetting('dev_mode', isset($_POST['dev_mode']) ? '1' : '0');
                 setFlash('success', 'Konfigurasi umum berhasil disimpan.');
             } elseif ($section === 'mikrotik') {
                 setSetting('mikrotik_ip', trim($_POST['mikrotik_ip'] ?? ''));
@@ -63,6 +64,7 @@ $facebookRedirectUri = getSetting('facebook_redirect_uri', FACEBOOK_REDIRECT_URI
 $siteName           = getSetting('site_name', APP_NAME);
 $hotspotLoginUrl    = getSetting('hotspot_login_url', DEFAULT_HOTSPOT_LOGIN_URL);
 $freeSessionLimit   = getSetting('free_session_limit_seconds', (string) FREE_SESSION_LIMIT);
+$devMode            = getSetting('dev_mode', '0');
 
 $mtIp       = getSetting('mikrotik_ip', '192.168.88.1');
 $mtUsername  = getSetting('mikrotik_username', 'admin');
@@ -187,6 +189,13 @@ $pageTitle = 'Settings';
                                     <label class="form-label">Batas Sesi Gratis (detik)</label>
                                     <input type="number" name="free_session_limit" class="form-input" value="<?= sanitizeInput($freeSessionLimit) ?>" min="300" max="86400">
                                     <p class="form-help">Default: 3600 detik (1 jam)</p>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label" style="display:flex;align-items:center;gap:8px;cursor:pointer;">
+                                        <input type="checkbox" name="dev_mode" value="1" <?= $devMode === '1' ? 'checked' : '' ?>>
+                                        Developer Mode (Bypass Hotspot Guard)
+                                    </label>
+                                    <p class="form-help">Aktifkan untuk dapat mengakses halaman portal di luar jaringan MikroTik. <strong>Jangan lupa nonaktifkan saat production!</strong></p>
                                 </div>
                                 <button type="submit" class="btn btn-primary">
                                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>

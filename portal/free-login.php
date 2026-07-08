@@ -12,7 +12,7 @@ session_start();
 
 // ── Hotspot Access Guard ──────────────────────────────────────────────────────
 // Halaman ini hanya bisa diakses setelah melalui portal/index.php dari MikroTik.
-if (empty($_SESSION['portal_mac']) && empty($_SESSION['portal_ip'])) {
+if (empty($_SESSION['portal_mac']) && empty($_SESSION['portal_ip']) && getSetting('dev_mode') !== '1') {
     http_response_code(403);
     require __DIR__ . '/access-denied.php';
     exit;
