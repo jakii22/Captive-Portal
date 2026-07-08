@@ -96,12 +96,12 @@ $siteName = getSetting('site_name', APP_NAME);
     <div class="portal-container">
         <!-- Brand -->
         <div class="portal-brand">
-            <div class="portal-logos" style="display: flex; align-items: center; justify-content: center; gap: 20px; margin-bottom: 24px; width: 100%;">
-                <div style="flex: 1; display: flex; justify-content: flex-end;">
+            <div class="portal-logos" style="display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 20px; margin-bottom: 24px; width: 100%; max-width: 400px; margin-left: auto; margin-right: auto;">
+                <div style="display: flex; justify-content: flex-end;">
                     <img src="assets/img/okenet.png" alt="Okenet" style="height: 42px; width: auto; object-fit: contain;">
                 </div>
-                <span style="color: var(--text-muted); opacity: 0.5; font-size: 1.2rem;">&times;</span>
-                <div style="flex: 1; display: flex; justify-content: flex-start;">
+                <span style="color: var(--text-muted); opacity: 0.5; font-size: 1.2rem; display: flex; justify-content: center;">&times;</span>
+                <div style="display: flex; justify-content: flex-start;">
                     <img src="assets/img/komdigi.svg" alt="Komdigi" style="height: 48px; width: auto; object-fit: contain;">
                 </div>
             </div>
