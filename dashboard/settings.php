@@ -84,6 +84,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 setSetting('portal_accent_secondary', trim($_POST['portal_accent_secondary'] ?? '#06b6d4'));
                 setSetting('portal_bg_color', trim($_POST['portal_bg_color'] ?? '#f0f2f5'));
                 setSetting('portal_footer_text', trim($_POST['portal_footer_text'] ?? 'Okenet Hotspot'));
+                setSetting('portal_marquee_text', trim($_POST['portal_marquee_text'] ?? ''));
+                setSetting('portal_marquee_active', isset($_POST['portal_marquee_active']) ? '1' : '0');
 
                 // Handle logo upload
                 if (!empty($_FILES['portal_logo']['name']) && $_FILES['portal_logo']['error'] === UPLOAD_ERR_OK) {
@@ -104,7 +106,31 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         }
                     } else {
                         setFlash('error', 'Logo harus berformat PNG/JPG/SVG/WebP dan maksimal 5MB.');
-                        header('Location: settings.php');
+                        header('Location: settings.php?tab=appearance');
+                        exit;
+                    }
+                }
+
+                // Handle background image upload
+                if (!empty($_FILES['portal_bg_image']['name']) && $_FILES['portal_bg_image']['error'] === UPLOAD_ERR_OK) {
+                    $file = $_FILES['portal_bg_image'];
+                    $allowedTypes = ['image/png', 'image/jpeg', 'image/webp'];
+                    if (in_array($file['type'], $allowedTypes) && $file['size'] <= MAX_UPLOAD_SIZE) {
+                        $ext = pathinfo($file['name'], PATHINFO_EXTENSION);
+                        $filename = 'portal_bg_' . time() . '.' . $ext;
+                        $destDir = __DIR__ . '/../uploads/portal/';
+                        if (!is_dir($destDir)) mkdir($destDir, 0755, true);
+                        if (move_uploaded_file($file['tmp_name'], $destDir . $filename)) {
+                            // Delete old bg
+                            $oldBg = getSetting('portal_bg_image_url');
+                            if ($oldBg && file_exists(__DIR__ . '/../' . $oldBg)) {
+                                @unlink(__DIR__ . '/../' . $oldBg);
+                            }
+                            setSetting('portal_bg_image_url', 'uploads/portal/' . $filename);
+                        }
+                    } else {
+                        setFlash('error', 'Background harus berformat PNG/JPG/WebP dan maksimal 5MB.');
+                        header('Location: settings.php?tab=appearance');
                         exit;
                     }
                 }
@@ -116,6 +142,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         @unlink(__DIR__ . '/../' . $oldLogo);
                     }
                     setSetting('portal_custom_logo_url', '');
+                }
+
+                // Handle reset background
+                if (isset($_POST['reset_bg']) && $_POST['reset_bg'] === '1') {
+                    $oldBg = getSetting('portal_bg_image_url');
+                    if ($oldBg && file_exists(__DIR__ . '/../' . $oldBg)) {
+                        @unlink(__DIR__ . '/../' . $oldBg);
+                    }
+                    setSetting('portal_bg_image_url', '');
                 }
 
                 setFlash('success', 'Tampilan portal berhasil diperbarui.');
@@ -190,6 +225,9 @@ $portalAccentSecondary = getSetting('portal_accent_secondary', '#06b6d4');
 $portalBgColor       = getSetting('portal_bg_color', '#f0f2f5');
 $portalFooterText    = getSetting('portal_footer_text', 'Okenet Hotspot');
 $portalCustomLogo    = getSetting('portal_custom_logo_url', '');
+$portalBgImage       = getSetting('portal_bg_image_url', '');
+$portalMarqueeText   = getSetting('portal_marquee_text', '');
+$portalMarqueeActive = getSetting('portal_marquee_active', '0');
 
 // Try to connect and fetch MikroTik status
 $connected = false;
@@ -513,7 +551,31 @@ $pageTitle = 'Settings';
                                     <?php endif; ?>
                                 </div>
 
-                                <button type="submit" class="btn btn-primary">
+                                <div class="form-group">
+                                    <label class="form-label">Upload Background Image</label>
+                                    <input type="file" name="portal_bg_image" accept="image/png,image/jpeg,image/webp" class="form-input" style="padding:8px;">
+                                    <p class="form-help">Bakal menutupi seluruh background layar (Opsional).</p>
+                                    <?php if (!empty($portalBgImage)): ?>
+                                    <div style="margin-top:8px;display:flex;align-items:center;gap:12px;">
+                                        <img src="../<?= sanitizeInput($portalBgImage) ?>" alt="Background" style="height:36px;width:auto;border-radius:6px;background:rgba(255,255,255,0.1);padding:4px;">
+                                        <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:0.8rem;color:#f43f5e;">
+                                            <input type="checkbox" name="reset_bg" value="1"> Hapus background
+                                        </label>
+                                    </div>
+                                    <?php endif; ?>
+                                </div>
+
+                                <div class="form-group" style="padding: 16px; background: rgba(0,0,0,0.02); border-radius: 8px; border: 1px dashed var(--glass-border);">
+                                    <label style="display:flex;align-items:center;gap:8px;font-weight:600;margin-bottom:12px;cursor:pointer;">
+                                        <input type="checkbox" name="portal_marquee_active" value="1" <?= $portalMarqueeActive === '1' ? 'checked' : '' ?>>
+                                        Aktifkan Teks Berjalan (Marquee)
+                                    </label>
+                                    <label class="form-label">Teks Promo</label>
+                                    <textarea name="portal_marquee_text" class="form-input" rows="2" placeholder="Selamat datang di jaringan WiFi Okenet! Nikmati promo spesial hari ini..."><?= sanitizeInput($portalMarqueeText) ?></textarea>
+                                    <p class="form-help">Teks ini akan bergerak di bagian bawah layar login.</p>
+                                </div>
+
+                                <button type="submit" class="btn btn-primary" style="margin-top:16px;">
                                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
                                     Simpan Tampilan Portal
                                 </button>

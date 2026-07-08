@@ -73,6 +73,9 @@ $portalAccentSecondary = getSetting('portal_accent_secondary', '#06b6d4');
 $portalBgColor       = getSetting('portal_bg_color', '#f0f2f5');
 $portalFooterText    = getSetting('portal_footer_text', 'Okenet Hotspot');
 $portalCustomLogo    = getSetting('portal_custom_logo_url', '');
+$portalBgImage       = getSetting('portal_bg_image_url', '');
+$portalMarqueeText   = getSetting('portal_marquee_text', '');
+$portalMarqueeActive = getSetting('portal_marquee_active', '0');
 
 // Get active advertisements
 $ads = getActiveAds();
@@ -98,6 +101,14 @@ $ads = getActiveAds();
         :root:not([data-theme="dark"]) {
             --bg-primary: <?= htmlspecialchars($portalBgColor) ?>;
         }
+        <?php if (!empty($portalBgImage)): ?>
+        body {
+            background-image: url('../<?= htmlspecialchars($portalBgImage) ?>');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+        }
+        <?php endif; ?>
     </style>
 </head>
 <body>
@@ -234,6 +245,14 @@ $ads = getActiveAds();
         </div>
         </div> <!-- End of Right Pane -->
     </div>
+
+    <?php if ($portalMarqueeActive === '1' && !empty($portalMarqueeText)): ?>
+    <div class="portal-marquee">
+        <div class="portal-marquee-text">
+            <?= htmlspecialchars($portalMarqueeText) ?>
+        </div>
+    </div>
+    <?php endif; ?>
 
     <script src="assets/js/portal.js?v=1.1"></script>
 </body>

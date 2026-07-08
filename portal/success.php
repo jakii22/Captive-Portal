@@ -35,6 +35,11 @@ if ($loginMethod === 'free' && $sessionLimit > 0) {
     $elapsed = time() - $loginTime;
     $remainingSeconds = max(0, $sessionLimit - $elapsed);
 }
+// Load portal appearance settings
+$portalBgColor       = getSetting('portal_bg_color', '#f0f2f5');
+$portalBgImage       = getSetting('portal_bg_image_url', '');
+$portalMarqueeText   = getSetting('portal_marquee_text', '');
+$portalMarqueeActive = getSetting('portal_marquee_active', '0');
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -44,7 +49,20 @@ if ($loginMethod === 'free' && $sessionLimit > 0) {
     <meta name="description" content="Berhasil terhubung ke <?= sanitizeInput($siteName) ?>">
     <meta name="robots" content="noindex, nofollow">
     <title>Berhasil Terhubung - <?= sanitizeInput($siteName) ?></title>
-    <link rel="stylesheet" href="assets/css/portal.css?v=1.1">
+    <link rel="stylesheet" href="assets/css/portal.css?v=1.2">
+    <style>
+        :root:not([data-theme="dark"]) {
+            --bg-primary: <?= htmlspecialchars($portalBgColor) ?>;
+        }
+        <?php if (!empty($portalBgImage)): ?>
+        body {
+            background-image: url('../<?= htmlspecialchars($portalBgImage) ?>');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+        }
+        <?php endif; ?>
+    </style>
 </head>
 <body>
     <!-- Theme Toggle -->
@@ -124,6 +142,14 @@ if ($loginMethod === 'free' && $sessionLimit > 0) {
             <p>© <?= date('Y') ?> <?= sanitizeInput($siteName) ?></p>
         </div>
     </div>
+
+    <?php if ($portalMarqueeActive === '1' && !empty($portalMarqueeText)): ?>
+    <div class="portal-marquee">
+        <div class="portal-marquee-text">
+            <?= htmlspecialchars($portalMarqueeText) ?>
+        </div>
+    </div>
+    <?php endif; ?>
 
     <script src="assets/js/portal.js?v=1.1"></script>
 </body>
