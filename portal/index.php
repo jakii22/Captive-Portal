@@ -65,6 +65,14 @@ if (!empty($facebookAppId)) {
 }
 
 $siteName = getSetting('site_name', APP_NAME);
+
+// Load portal appearance settings
+$portalSubtitle      = getSetting('portal_subtitle', 'Terhubung ke internet dengan mudah');
+$portalAccentColor   = getSetting('portal_accent_color', '#7c3aed');
+$portalAccentSecondary = getSetting('portal_accent_secondary', '#06b6d4');
+$portalBgColor       = getSetting('portal_bg_color', '#f0f2f5');
+$portalFooterText    = getSetting('portal_footer_text', 'Okenet Hotspot');
+$portalCustomLogo    = getSetting('portal_custom_logo_url', '');
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -74,8 +82,17 @@ $siteName = getSetting('site_name', APP_NAME);
     <meta name="description" content="<?= sanitizeInput($siteName) ?> - Pilih metode login untuk terhubung ke internet">
     <meta name="robots" content="noindex, nofollow">
     <title><?= sanitizeInput($siteName) ?> - Login</title>
-    <link rel="stylesheet" href="assets/css/portal.css?v=1.1">
+    <link rel="stylesheet" href="assets/css/portal.css?v=1.2">
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><circle cx='12' cy='12' r='10' fill='%237c3aed'/></svg>">
+    <style>
+        :root {
+            --accent-violet: <?= htmlspecialchars($portalAccentColor) ?>;
+            --accent-violet-glow: <?= htmlspecialchars($portalAccentColor) ?>33;
+            --accent-cyan: <?= htmlspecialchars($portalAccentSecondary) ?>;
+            --accent-cyan-glow: <?= htmlspecialchars($portalAccentSecondary) ?>33;
+            --bg-primary: <?= htmlspecialchars($portalBgColor) ?>;
+        }
+    </style>
 </head>
 <body>
     <!-- Theme Toggle -->
@@ -96,6 +113,11 @@ $siteName = getSetting('site_name', APP_NAME);
     <div class="portal-container">
         <!-- Brand -->
         <div class="portal-brand">
+            <?php if (!empty($portalCustomLogo)): ?>
+            <div style="margin-bottom: 24px;">
+                <img src="../<?= htmlspecialchars($portalCustomLogo) ?>" alt="<?= sanitizeInput($siteName) ?>" style="height: 56px; width: auto; object-fit: contain;">
+            </div>
+            <?php else: ?>
             <div class="portal-logos" style="display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 20px; margin-bottom: 24px; width: 100%; max-width: 400px; margin-left: auto; margin-right: auto;">
                 <div style="display: flex; justify-content: flex-end;">
                     <img src="assets/img/okenet.png" alt="Okenet" style="height: 42px; width: auto; object-fit: contain;">
@@ -105,8 +127,9 @@ $siteName = getSetting('site_name', APP_NAME);
                     <img src="assets/img/komdigi.svg" alt="Komdigi" style="height: 48px; width: auto; object-fit: contain;">
                 </div>
             </div>
+            <?php endif; ?>
             <h1><?= sanitizeInput($siteName) ?></h1>
-            <p>Terhubung ke internet dengan mudah</p>
+            <p><?= sanitizeInput($portalSubtitle) ?></p>
         </div>
 
         <!-- Login Card -->
@@ -170,7 +193,7 @@ $siteName = getSetting('site_name', APP_NAME);
         <!-- Footer -->
         <div class="portal-footer">
             <p>Dengan melanjutkan, Anda menyetujui <a href="#">Syarat & Ketentuan</a> kami.</p>
-            <p style="margin-top: 8px; opacity: 0.5;">© <?= date('Y') ?> Okenet Hotspot</p>
+            <p style="margin-top: 8px; opacity: 0.5;">© <?= date('Y') ?> <?= sanitizeInput($portalFooterText) ?></p>
         </div>
     </div>
 

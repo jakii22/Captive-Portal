@@ -43,6 +43,47 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 setSetting('mikrotik_password', trim($_POST['mikrotik_password'] ?? ''));
                 setSetting('mikrotik_port', trim($_POST['mikrotik_port'] ?? '8728'));
                 setFlash('success', 'Konfigurasi MikroTik berhasil disimpan.');
+            } elseif ($section === 'portal_appearance') {
+                setSetting('portal_subtitle', trim($_POST['portal_subtitle'] ?? 'Terhubung ke internet dengan mudah'));
+                setSetting('portal_accent_color', trim($_POST['portal_accent_color'] ?? '#7c3aed'));
+                setSetting('portal_accent_secondary', trim($_POST['portal_accent_secondary'] ?? '#06b6d4'));
+                setSetting('portal_bg_color', trim($_POST['portal_bg_color'] ?? '#f0f2f5'));
+                setSetting('portal_footer_text', trim($_POST['portal_footer_text'] ?? 'Okenet Hotspot'));
+
+                // Handle logo upload
+                if (!empty($_FILES['portal_logo']['name']) && $_FILES['portal_logo']['error'] === UPLOAD_ERR_OK) {
+                    $file = $_FILES['portal_logo'];
+                    $allowedTypes = ['image/png', 'image/jpeg', 'image/svg+xml', 'image/webp'];
+                    if (in_array($file['type'], $allowedTypes) && $file['size'] <= MAX_UPLOAD_SIZE) {
+                        $ext = pathinfo($file['name'], PATHINFO_EXTENSION);
+                        $filename = 'portal_logo_' . time() . '.' . $ext;
+                        $destDir = __DIR__ . '/../uploads/portal/';
+                        if (!is_dir($destDir)) mkdir($destDir, 0755, true);
+                        if (move_uploaded_file($file['tmp_name'], $destDir . $filename)) {
+                            // Delete old logo
+                            $oldLogo = getSetting('portal_custom_logo_url');
+                            if ($oldLogo && file_exists(__DIR__ . '/../' . $oldLogo)) {
+                                @unlink(__DIR__ . '/../' . $oldLogo);
+                            }
+                            setSetting('portal_custom_logo_url', 'uploads/portal/' . $filename);
+                        }
+                    } else {
+                        setFlash('error', 'Logo harus berformat PNG/JPG/SVG/WebP dan maksimal 5MB.');
+                        header('Location: settings.php');
+                        exit;
+                    }
+                }
+
+                // Handle reset logo
+                if (isset($_POST['reset_logo']) && $_POST['reset_logo'] === '1') {
+                    $oldLogo = getSetting('portal_custom_logo_url');
+                    if ($oldLogo && file_exists(__DIR__ . '/../' . $oldLogo)) {
+                        @unlink(__DIR__ . '/../' . $oldLogo);
+                    }
+                    setSetting('portal_custom_logo_url', '');
+                }
+
+                setFlash('success', 'Tampilan portal berhasil diperbarui.');
             }
         } catch (Exception $e) {
             error_log('Config Error: ' . $e->getMessage());
@@ -70,6 +111,14 @@ $mtIp       = getSetting('mikrotik_ip', '192.168.88.1');
 $mtUsername  = getSetting('mikrotik_username', 'admin');
 $mtPassword = getSetting('mikrotik_password', '');
 $mtPort     = getSetting('mikrotik_port', '8728');
+
+// Portal appearance settings
+$portalSubtitle      = getSetting('portal_subtitle', 'Terhubung ke internet dengan mudah');
+$portalAccentColor   = getSetting('portal_accent_color', '#7c3aed');
+$portalAccentSecondary = getSetting('portal_accent_secondary', '#06b6d4');
+$portalBgColor       = getSetting('portal_bg_color', '#f0f2f5');
+$portalFooterText    = getSetting('portal_footer_text', 'Okenet Hotspot');
+$portalCustomLogo    = getSetting('portal_custom_logo_url', '');
 
 // Try to connect and fetch MikroTik status
 $connected = false;
@@ -323,6 +372,115 @@ $pageTitle = 'Settings';
                             </form>
                         </div>
                     </div>
+                </div>
+            </div>
+
+            <!-- Portal Appearance (Full Width) -->
+            <div class="card mt-6">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:-3px;margin-right:6px;"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                        Tampilan Portal (Landing Page Builder)
+                    </h3>
+                </div>
+                <div class="card-body">
+                    <form method="POST" enctype="multipart/form-data">
+                        <input type="hidden" name="section" value="portal_appearance">
+                        <input type="hidden" name="csrf_token" value="<?= $csrfToken ?>">
+
+                        <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;">
+                            <!-- Left: Form Fields -->
+                            <div>
+                                <div class="form-group">
+                                    <label class="form-label">Subtitle Portal</label>
+                                    <input type="text" name="portal_subtitle" class="form-input" value="<?= sanitizeInput($portalSubtitle) ?>" placeholder="Terhubung ke internet dengan mudah">
+                                    <p class="form-help">Teks di bawah nama hotspot</p>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="form-label">Teks Footer</label>
+                                    <input type="text" name="portal_footer_text" class="form-input" value="<?= sanitizeInput($portalFooterText) ?>" placeholder="Okenet Hotspot">
+                                    <p class="form-help">Teks copyright di bagian bawah portal</p>
+                                </div>
+
+                                <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;">
+                                    <div class="form-group">
+                                        <label class="form-label">Warna Aksen</label>
+                                        <div style="display:flex;align-items:center;gap:8px;">
+                                            <input type="color" name="portal_accent_color" value="<?= sanitizeInput($portalAccentColor) ?>" style="width:40px;height:36px;border:1px solid var(--glass-border);border-radius:8px;background:none;cursor:pointer;padding:2px;">
+                                            <input type="text" class="form-input" value="<?= sanitizeInput($portalAccentColor) ?>" readonly style="font-size:0.8rem;">
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label">Warna Sekunder</label>
+                                        <div style="display:flex;align-items:center;gap:8px;">
+                                            <input type="color" name="portal_accent_secondary" value="<?= sanitizeInput($portalAccentSecondary) ?>" style="width:40px;height:36px;border:1px solid var(--glass-border);border-radius:8px;background:none;cursor:pointer;padding:2px;">
+                                            <input type="text" class="form-input" value="<?= sanitizeInput($portalAccentSecondary) ?>" readonly style="font-size:0.8rem;">
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label">Background</label>
+                                        <div style="display:flex;align-items:center;gap:8px;">
+                                            <input type="color" name="portal_bg_color" value="<?= sanitizeInput($portalBgColor) ?>" style="width:40px;height:36px;border:1px solid var(--glass-border);border-radius:8px;background:none;cursor:pointer;padding:2px;">
+                                            <input type="text" class="form-input" value="<?= sanitizeInput($portalBgColor) ?>" readonly style="font-size:0.8rem;">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="form-label">Upload Logo Kustom</label>
+                                    <input type="file" name="portal_logo" accept="image/png,image/jpeg,image/svg+xml,image/webp" class="form-input" style="padding:8px;">
+                                    <p class="form-help">PNG/JPG/SVG/WebP, maks 5MB. Kosongkan jika tidak ingin mengubah.</p>
+                                    <?php if (!empty($portalCustomLogo)): ?>
+                                    <div style="margin-top:8px;display:flex;align-items:center;gap:12px;">
+                                        <img src="../<?= sanitizeInput($portalCustomLogo) ?>" alt="Logo" style="height:36px;width:auto;border-radius:6px;background:rgba(255,255,255,0.1);padding:4px;">
+                                        <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:0.8rem;color:#f43f5e;">
+                                            <input type="checkbox" name="reset_logo" value="1"> Hapus logo kustom
+                                        </label>
+                                    </div>
+                                    <?php endif; ?>
+                                </div>
+
+                                <button type="submit" class="btn btn-primary">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+                                    Simpan Tampilan Portal
+                                </button>
+                            </div>
+
+                            <!-- Right: Live Preview -->
+                            <div>
+                                <label class="form-label" style="margin-bottom:12px;">Live Preview</label>
+                                <div id="portalPreview" style="background:<?= sanitizeInput($portalBgColor) ?>;border-radius:16px;padding:32px 20px;text-align:center;border:1px solid var(--glass-border);min-height:320px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;position:relative;overflow:hidden;">
+                                    <div style="position:absolute;inset:0;background:radial-gradient(circle at 20% 20%, <?= sanitizeInput($portalAccentColor) ?>22 0%, transparent 50%),radial-gradient(circle at 80% 80%, <?= sanitizeInput($portalAccentSecondary) ?>22 0%, transparent 50%);pointer-events:none;"></div>
+                                    <div style="position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;gap:8px;">
+                                        <?php if (!empty($portalCustomLogo)): ?>
+                                        <img src="../<?= sanitizeInput($portalCustomLogo) ?>" alt="Logo" style="height:40px;width:auto;margin-bottom:8px;">
+                                        <?php else: ?>
+                                        <div style="display:flex;align-items:center;gap:12px;margin-bottom:8px;">
+                                            <img src="../portal/assets/img/okenet.png" alt="Okenet" style="height:28px;width:auto;">
+                                            <span style="opacity:0.4;font-size:0.9rem;">×</span>
+                                            <img src="../portal/assets/img/komdigi.svg" alt="Komdigi" style="height:32px;width:auto;">
+                                        </div>
+                                        <?php endif; ?>
+                                        <div style="font-size:1.1rem;font-weight:700;font-style:italic;color:<?= sanitizeInput($portalAccentSecondary) ?>;"><?= sanitizeInput(getSetting('site_name', APP_NAME)) ?></div>
+                                        <div style="font-size:0.75rem;color:#666;" id="previewSubtitle"><?= sanitizeInput($portalSubtitle) ?></div>
+                                    </div>
+                                    <div style="position:relative;z-index:1;background:rgba(255,255,255,0.9);border-radius:12px;padding:16px;width:100%;max-width:250px;box-shadow:0 4px 16px rgba(0,0,0,0.06);">
+                                        <div style="font-size:0.8rem;font-weight:600;color:#333;margin-bottom:8px;">Pilih Metode Login</div>
+                                        <div style="background:#f5f5f5;border-radius:8px;padding:8px 12px;display:flex;align-items:center;gap:8px;margin-bottom:6px;">
+                                            <svg width="14" height="14" viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/></svg>
+                                            <span style="font-size:0.7rem;color:#333;">Google</span>
+                                        </div>
+                                        <div style="background:#f5f5f5;border-radius:8px;padding:8px 12px;display:flex;align-items:center;gap:8px;">
+                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="#10b981"><circle cx="12" cy="12" r="10" fill="none" stroke="#10b981" stroke-width="2"/></svg>
+                                            <span style="font-size:0.7rem;color:#333;">Gratis 1 Jam</span>
+                                        </div>
+                                    </div>
+                                    <div style="position:relative;z-index:1;font-size:0.6rem;color:#999;margin-top:4px;" id="previewFooter">© 2026 <?= sanitizeInput($portalFooterText) ?></div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
                 </div>
             </div>
 

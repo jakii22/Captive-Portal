@@ -169,7 +169,13 @@ INSERT INTO settings (setting_key, setting_value) VALUES
     ('hotspot_login_url', 'http://hotspot.local/login'),
     ('free_session_limit_seconds', '3600'),
     ('site_name', 'Public Hotspot'),
-    ('site_logo_url', '')
+    ('site_logo_url', ''),
+    ('portal_subtitle', 'Terhubung ke internet dengan mudah'),
+    ('portal_accent_color', '#7c3aed'),
+    ('portal_accent_secondary', '#06b6d4'),
+    ('portal_bg_color', '#f0f2f5'),
+    ('portal_footer_text', 'Okenet Hotspot'),
+    ('portal_custom_logo_url', '')
 ON CONFLICT (setting_key) DO NOTHING;
 
 -- ============================================================
