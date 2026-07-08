@@ -115,34 +115,10 @@ $ads = getActiveAds();
     <!-- Main Container -->
     <div class="portal-container <?= !empty($ads) ? 'portal-split-layout' : '' ?>">
         <?php if (!empty($ads)): ?>
-        <!-- Left Pane: Brand & Ads -->
+        <!-- Left Pane: Ads -->
         <div class="portal-left-pane">
-        <?php endif; ?>
-
-            <!-- Brand -->
-            <div class="portal-brand">
-                <?php if (!empty($portalCustomLogo)): ?>
-                <div style="margin-bottom: 24px;">
-                    <img src="../<?= htmlspecialchars($portalCustomLogo) ?>" alt="<?= sanitizeInput($siteName) ?>" style="height: 56px; width: auto; object-fit: contain;">
-                </div>
-                <?php else: ?>
-                <div class="portal-logos" style="display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 20px; margin-bottom: 24px; width: 100%; max-width: 400px; margin-left: auto; margin-right: auto;">
-                    <div style="display: flex; justify-content: flex-end;">
-                        <img src="assets/img/okenet.png" alt="Okenet" style="height: 42px; width: auto; object-fit: contain;">
-                    </div>
-                    <span style="color: var(--text-muted); opacity: 0.5; font-size: 1.2rem; display: flex; justify-content: center;">&times;</span>
-                    <div style="display: flex; justify-content: flex-start;">
-                        <img src="assets/img/komdigi.svg" alt="Komdigi" style="height: 48px; width: auto; object-fit: contain;">
-                    </div>
-                </div>
-                <?php endif; ?>
-                <h1><?= sanitizeInput($siteName) ?></h1>
-                <p><?= sanitizeInput($portalSubtitle) ?></p>
-            </div>
-
-        <?php if (!empty($ads)): ?>
             <!-- Advertisement Carousel -->
-            <div class="ad-carousel portal-ad-side" style="margin-bottom: 24px;">
+            <div class="ad-carousel portal-ad-side" style="margin-bottom: 0;">
                 <div class="ad-carousel-inner">
                     <?php foreach ($ads as $ad): ?>
                     <div class="ad-slide">
@@ -173,6 +149,27 @@ $ads = getActiveAds();
 
         <!-- Right Pane: Login & Footer -->
         <div class="<?= !empty($ads) ? 'portal-right-pane' : '' ?>">
+            <!-- Brand -->
+            <div class="portal-brand">
+                <?php if (!empty($portalCustomLogo)): ?>
+                <div style="margin-bottom: 24px;">
+                    <img src="../<?= htmlspecialchars($portalCustomLogo) ?>" alt="<?= sanitizeInput($siteName) ?>" style="height: 56px; width: auto; object-fit: contain;">
+                </div>
+                <?php else: ?>
+                <div class="portal-logos" style="display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 20px; margin-bottom: 24px; width: 100%; max-width: 400px; margin-left: auto; margin-right: auto;">
+                    <div style="display: flex; justify-content: flex-end;">
+                        <img src="assets/img/okenet.png" alt="Okenet" style="height: 42px; width: auto; object-fit: contain;">
+                    </div>
+                    <span style="color: var(--text-muted); opacity: 0.5; font-size: 1.2rem; display: flex; justify-content: center;">&times;</span>
+                    <div style="display: flex; justify-content: flex-start;">
+                        <img src="assets/img/komdigi.svg" alt="Komdigi" style="height: 48px; width: auto; object-fit: contain;">
+                    </div>
+                </div>
+                <?php endif; ?>
+                <h1><?= sanitizeInput($siteName) ?></h1>
+                <p><?= sanitizeInput($portalSubtitle) ?></p>
+            </div>
+
             <!-- Login Card -->
             <div class="login-card">
                 <h2 class="login-card-title">Pilih Metode Login</h2>

@@ -735,16 +735,6 @@ body {
         max-width: 450px;
     }
 
-    .portal-split-layout .portal-brand {
-        text-align: left;
-    }
-
-    .portal-split-layout .portal-logos {
-        margin-left: 0 !important;
-        margin-right: 0 !important;
-        justify-content: flex-start;
-    }
-    
     .portal-split-layout .portal-ad-side {
         margin-top: 24px;
         box-shadow: var(--glass-shadow);
