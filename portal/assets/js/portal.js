@@ -168,6 +168,12 @@ function initSessionTimer() {
         if (remaining <= 0) {
             valueEl.textContent = '00:00:00';
             valueEl.style.color = '#f43f5e';
+            
+            if (!timerEl.dataset.expired) {
+                timerEl.dataset.expired = 'true';
+                alert('Waktu Akses Gratis Anda telah habis! Koneksi akan diputus. Silakan login kembali jika ingin melanjutkan.');
+                window.location.href = 'logout.php?reason=timeout';
+            }
             return;
         }
 
