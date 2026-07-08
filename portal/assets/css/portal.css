@@ -756,18 +756,27 @@ body {
 /* ── Stacked Layout (Mobile) ── */
 @media (max-width: 991px) {
     .portal-split-layout {
+        display: flex;
         flex-direction: column;
     }
     
-    .portal-split-layout .portal-left-pane,
+    .portal-split-layout .portal-left-pane {
+        order: 2;
+        width: 100%;
+        max-width: 480px;
+        margin: 0 auto;
+    }
+
     .portal-split-layout .portal-right-pane {
+        order: 1;
         width: 100%;
         max-width: 480px;
         margin: 0 auto;
     }
     
     .portal-split-layout .portal-ad-side {
-        margin-bottom: 24px;
+        margin-top: 24px;
+        margin-bottom: 0;
         box-shadow: var(--glass-shadow);
         border: 1px solid var(--glass-border);
         border-radius: var(--radius-lg);
