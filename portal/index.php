@@ -93,6 +93,9 @@ $ads = getActiveAds();
             --accent-violet-glow: <?= htmlspecialchars($portalAccentColor) ?>33;
             --accent-cyan: <?= htmlspecialchars($portalAccentSecondary) ?>;
             --accent-cyan-glow: <?= htmlspecialchars($portalAccentSecondary) ?>33;
+        }
+        /* Hanya timpa warna background jika sedang dalam mode terang (Light Mode) */
+        :root:not([data-theme="dark"]) {
             --bg-primary: <?= htmlspecialchars($portalBgColor) ?>;
         }
     </style>
