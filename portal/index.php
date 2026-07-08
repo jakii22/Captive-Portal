@@ -113,9 +113,11 @@ $ads = getActiveAds();
     </div>
 
     <!-- Main Container -->
-    <div class="portal-container">
-        <!-- Brand -->
-        <div class="portal-brand">
+    <div class="portal-container portal-split-layout">
+        <!-- Left Pane: Brand & Ads -->
+        <div class="portal-left-pane">
+            <!-- Brand -->
+            <div class="portal-brand">
             <?php if (!empty($portalCustomLogo)): ?>
             <div style="margin-bottom: 24px;">
                 <img src="../<?= htmlspecialchars($portalCustomLogo) ?>" alt="<?= sanitizeInput($siteName) ?>" style="height: 56px; width: auto; object-fit: contain;">
@@ -135,12 +137,12 @@ $ads = getActiveAds();
             <p><?= sanitizeInput($portalSubtitle) ?></p>
         </div>
 
-        <!-- Login Card -->
-        <div class="login-card">
-            <?php if (!empty($ads)): ?>
-            <!-- Advertisement Carousel -->
-            <div class="ad-carousel" style="margin-bottom: 24px; margin-top: -10px;">
-                <div class="ad-carousel-inner">
+        </div>
+
+        <?php if (!empty($ads)): ?>
+        <!-- Advertisement Carousel -->
+        <div class="ad-carousel portal-ad-side" style="margin-bottom: 24px;">
+            <div class="ad-carousel-inner">
                     <?php foreach ($ads as $ad): ?>
                     <div class="ad-slide">
                         <?php if (!empty($ad['link_url'])): ?>
@@ -165,9 +167,15 @@ $ads = getActiveAds();
                 </div>
                 <?php endif; ?>
             </div>
-            <?php endif; ?>
+        </div>
+        <?php endif; ?>
+        </div> <!-- End of Left Pane -->
 
-            <h2 class="login-card-title">Pilih Metode Login</h2>
+        <!-- Right Pane: Login & Footer -->
+        <div class="portal-right-pane">
+            <!-- Login Card -->
+            <div class="login-card">
+                <h2 class="login-card-title">Pilih Metode Login</h2>
             <p class="login-card-subtitle">Pilih salah satu cara untuk terhubung ke jaringan Wi-Fi</p>
 
             <div class="login-methods">
@@ -228,6 +236,7 @@ $ads = getActiveAds();
             <p>Dengan melanjutkan, Anda menyetujui <a href="#">Syarat & Ketentuan</a> kami.</p>
             <p style="margin-top: 8px; opacity: 0.5;">© <?= date('Y') ?> <?= sanitizeInput($portalFooterText) ?></p>
         </div>
+        </div> <!-- End of Right Pane -->
     </div>
 
     <script src="assets/js/portal.js?v=1.1"></script>
