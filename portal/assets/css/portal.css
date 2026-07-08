@@ -477,8 +477,9 @@ body {
 
 .ad-slide img {
     width: 100%;
-    height: 200px;
-    object-fit: cover;
+    height: auto;
+    max-height: 500px; /* Batasi maksimal tinggi agar tidak menutupi seluruh layar jika gambarnya terlalu panjang (portrait) */
+    object-fit: contain;
     display: block;
 }
 
