@@ -593,6 +593,7 @@ $pageTitle = 'Settings';
                     </table>
                 </div>
             </div>
+            <?php endif; ?>
 
         </main>
     </div>
