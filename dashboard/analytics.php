@@ -160,8 +160,8 @@ $pageTitle = 'Analytics & Demografi';
         .heatmap-grid {
             display: grid;
             grid-template-columns: 56px repeat(24, 1fr);
-            gap: 3px;
-            min-width: 700px;
+            gap: 2px;
+            min-width: 500px;
         }
         .heatmap-label {
             font-size: 0.7rem;
@@ -182,8 +182,8 @@ $pageTitle = 'Analytics & Demografi';
         .heatmap-cell {
             aspect-ratio: 1;
             border-radius: 4px;
-            min-width: 20px;
-            min-height: 20px;
+            min-width: 12px;
+            min-height: 12px;
             cursor: pointer;
             transition: transform 0.15s, box-shadow 0.15s;
             position: relative;
