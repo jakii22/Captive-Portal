@@ -96,10 +96,14 @@ $siteName = getSetting('site_name', APP_NAME);
     <div class="portal-container">
         <!-- Brand -->
         <div class="portal-brand">
-            <div class="portal-logos" style="display: flex; align-items: center; justify-content: center; gap: 20px; margin-bottom: 24px;">
-                <img src="assets/img/okenet.png" alt="Okenet" style="height: 42px; width: auto; object-fit: contain;">
+            <div class="portal-logos" style="display: flex; align-items: center; justify-content: center; gap: 20px; margin-bottom: 24px; width: 100%;">
+                <div style="flex: 1; display: flex; justify-content: flex-end;">
+                    <img src="assets/img/okenet.png" alt="Okenet" style="height: 42px; width: auto; object-fit: contain;">
+                </div>
                 <span style="color: var(--text-muted); opacity: 0.5; font-size: 1.2rem;">&times;</span>
-                <img src="assets/img/komdigi.svg" alt="Komdigi" style="height: 48px; width: auto; object-fit: contain;">
+                <div style="flex: 1; display: flex; justify-content: flex-start;">
+                    <img src="assets/img/komdigi.svg" alt="Komdigi" style="height: 48px; width: auto; object-fit: contain;">
+                </div>
             </div>
             <h1><?= sanitizeInput($siteName) ?></h1>
             <p>Terhubung ke internet dengan mudah</p>
