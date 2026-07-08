@@ -73,6 +73,9 @@ $portalAccentSecondary = getSetting('portal_accent_secondary', '#06b6d4');
 $portalBgColor       = getSetting('portal_bg_color', '#f0f2f5');
 $portalFooterText    = getSetting('portal_footer_text', 'Okenet Hotspot');
 $portalCustomLogo    = getSetting('portal_custom_logo_url', '');
+
+// Get active advertisements
+$ads = getActiveAds();
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -134,6 +137,36 @@ $portalCustomLogo    = getSetting('portal_custom_logo_url', '');
 
         <!-- Login Card -->
         <div class="login-card">
+            <?php if (!empty($ads)): ?>
+            <!-- Advertisement Carousel -->
+            <div class="ad-carousel" style="margin-bottom: 24px; margin-top: -10px;">
+                <div class="ad-carousel-inner">
+                    <?php foreach ($ads as $ad): ?>
+                    <div class="ad-slide">
+                        <?php if (!empty($ad['link_url'])): ?>
+                        <a href="<?= sanitizeInput($ad['link_url']) ?>" target="_blank" rel="noopener" class="ad-slide-link">
+                            <img src="<?= BASE_URL ?>/uploads/ads/<?= sanitizeInput($ad['image_path']) ?>"
+                                 alt="<?= sanitizeInput($ad['title']) ?>"
+                                 loading="lazy">
+                        </a>
+                        <?php else: ?>
+                        <img src="<?= BASE_URL ?>/uploads/ads/<?= sanitizeInput($ad['image_path']) ?>"
+                             alt="<?= sanitizeInput($ad['title']) ?>"
+                             loading="lazy">
+                        <?php endif; ?>
+                    </div>
+                    <?php endforeach; ?>
+                </div>
+                <?php if (count($ads) > 1): ?>
+                <div class="ad-carousel-dots">
+                    <?php foreach ($ads as $index => $ad): ?>
+                    <button class="ad-carousel-dot <?= $index === 0 ? 'active' : '' ?>" aria-label="Go to slide <?= $index + 1 ?>"></button>
+                    <?php endforeach; ?>
+                </div>
+                <?php endif; ?>
+            </div>
+            <?php endif; ?>
+
             <h2 class="login-card-title">Pilih Metode Login</h2>
             <p class="login-card-subtitle">Pilih salah satu cara untuk terhubung ke jaringan Wi-Fi</p>
 
