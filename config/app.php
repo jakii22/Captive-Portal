@@ -36,8 +36,8 @@ define('PORTAL_URL', BASE_URL . '/portal');
 define('DASHBOARD_URL', BASE_URL . '/dashboard');
 
 // File upload settings
-define('UPLOAD_DIR', __DIR__ . '/../uploads/');
-define('ADS_UPLOAD_DIR', UPLOAD_DIR . 'ads/');
+define('UPLOAD_DIR', dirname(__DIR__) . DIRECTORY_SEPARATOR . 'uploads' . DIRECTORY_SEPARATOR);
+define('ADS_UPLOAD_DIR', UPLOAD_DIR . 'ads' . DIRECTORY_SEPARATOR);
 define('MAX_UPLOAD_SIZE', 5 * 1024 * 1024); // 5MB
 define('ALLOWED_IMAGE_TYPES', ['image/jpeg', 'image/png', 'image/gif', 'image/webp']);
 

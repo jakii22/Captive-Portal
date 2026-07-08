@@ -62,7 +62,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $destination = ADS_UPLOAD_DIR . $filename;
 
                 if (!move_uploaded_file($file['tmp_name'], $destination)) {
-                    throw new RuntimeException('Gagal menyimpan file. Periksa permission folder uploads.');
+                    $err = error_get_last();
+                    throw new RuntimeException('Gagal menyimpan file. Periksa permission folder uploads. Error: ' . ($err['message'] ?? 'Unknown'));
                 }
 
                 // Save to database
