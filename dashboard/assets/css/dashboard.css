@@ -129,7 +129,7 @@ a:hover { color: var(--accent-violet-light); }
 .sidebar-brand-logo {
     width: 36px;
     height: 36px;
-    background: var(--accent-blue);
+    background: transparent;
     border-radius: var(--radius-sm);
     display: flex;
     align-items: center;
@@ -138,9 +138,8 @@ a:hover { color: var(--accent-violet-light); }
 }
 
 .sidebar-brand-logo svg {
-    width: 20px;
-    height: 20px;
-    fill: white;
+    width: 32px;
+    height: 32px;
 }
 
 .sidebar-brand-text {
