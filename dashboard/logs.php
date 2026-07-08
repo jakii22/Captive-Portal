@@ -67,6 +67,25 @@ try {
     $pagination = getPagination(0);
 }
 
+// Format duration to compact format (e.g. 1j 15m 10det)
+function formatDurationCompact(int $seconds): string
+{
+    if ($seconds < 60) {
+        return $seconds . ' det';
+    }
+
+    $hours = floor($seconds / 3600);
+    $minutes = floor(($seconds % 3600) / 60);
+    $secs = $seconds % 60;
+
+    $parts = [];
+    if ($hours > 0) $parts[] = $hours . 'j';
+    if ($minutes > 0) $parts[] = $minutes . 'm';
+    if ($secs > 0 && $hours == 0) $parts[] = $secs . ' det';
+
+    return implode(' ', $parts);
+}
+
 $currentPage = 'logs';
 $pageTitle = 'Riwayat Koneksi';
 $flash = getFlash();
@@ -80,6 +99,30 @@ $flash = getFlash();
     <title><?= $pageTitle ?> - Admin Panel</title>
     <link rel="icon" type="image/png" href="assets/img/favicon.png">
     <link rel="stylesheet" href="assets/css/dashboard.css?v=1.2">
+    <style>
+        /* Desain tabel ringkas agar pas di layar tanpa geser */
+        .data-table th, 
+        .data-table td {
+            padding: 10px 8px !important;
+            font-size: 0.8rem !important;
+        }
+        .user-email-text {
+            display: inline-block;
+            max-width: 140px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            vertical-align: bottom;
+            opacity: 0.7;
+        }
+        .status-cell {
+            font-size: 0.78rem !important;
+            line-height: 1.3;
+            max-width: 140px;
+            word-wrap: break-word;
+            white-space: normal !important;
+        }
+    </style>
 </head>
 <body>
 <div class="dashboard-layout">
@@ -151,28 +194,28 @@ $flash = getFlash();
                                         <?php endif; ?>
                                         <div>
                                             <strong><?= sanitizeInput($log['name'] ?? '-') ?></strong>
-                                            <br><span class="text-muted" style="font-size:0.7rem;"><?= sanitizeInput($log['username']) ?></span>
+                                            <br><span class="text-muted user-email-text" title="<?= sanitizeInput($log['username']) ?>"><?= sanitizeInput($log['username']) ?></span>
                                         </div>
                                     </div>
                                 </td>
                                 <td class="text-nowrap" style="font-family: monospace; font-size: 0.85rem;"><?= sanitizeInput($log['callingstationid']) ?></td>
-                                <td class="text-nowrap" style="font-family: monospace; font-size: 0.85rem;"><?= sanitizeInput($log['framedipaddress']) ?></td>
+                                <td class="text-nowrap" style="font-family: monospace; font-size: 0.85rem;"><?= sanitizeInput(str_replace('/32', '', $log['framedipaddress'])) ?></td>
                                 <td class="text-nowrap text-muted" style="font-size: 0.85rem;">
                                     <?= date('d/m/Y H:i:s', strtotime($log['acctstarttime'])) ?>
                                 </td>
                                 <td class="text-nowrap">
                                     <?php
                                     if ($log['acctstoptime']) {
-                                        echo formatDuration((int) $log['acctsessiontime']);
+                                        echo formatDurationCompact((int) $log['acctsessiontime']);
                                     } else {
                                         $duration = time() - strtotime($log['acctstarttime']);
-                                        echo '<span style="color:var(--success-color)">Aktif (' . formatDuration($duration) . ')</span>';
+                                        echo '<span style="color:var(--success-color)">Aktif (' . formatDurationCompact($duration) . ')</span>';
                                     }
                                     ?>
                                 </td>
                                 <td class="text-nowrap text-muted" style="font-size: 0.85rem;"><?= formatBytes((int) $log['acctinputoctets']) ?></td>
                                 <td class="text-nowrap text-muted" style="font-size: 0.85rem;"><?= formatBytes((int) $log['acctoutputoctets']) ?></td>
-                                <td style="font-size: 0.8rem;">
+                                <td class="status-cell">
                                     <?php if ($log['acctstoptime']): ?>
                                         <span class="text-muted">Selesai (<?= sanitizeInput($log['acctterminatecause'] ?: 'Unknown') ?>)</span>
                                     <?php else: ?>
