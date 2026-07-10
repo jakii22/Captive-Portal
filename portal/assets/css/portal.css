@@ -336,6 +336,18 @@ body {
     background: rgba(16, 185, 129, 0.15);
 }
 
+/* Logout button */
+.login-btn--logout {
+    border-color: rgba(244, 63, 94, 0.2);
+}
+.login-btn--logout:hover {
+    border-color: rgba(244, 63, 94, 0.4);
+    background: rgba(244, 63, 94, 0.08);
+}
+.login-btn--logout .login-btn-icon {
+    background: rgba(244, 63, 94, 0.15);
+}
+
 /* Button text container */
 .login-btn-text {
     display: flex;

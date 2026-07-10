@@ -135,6 +135,23 @@ $portalMarqueeActive = getSetting('portal_marquee_active', '0');
                 <p>Login method: <?= ucfirst(sanitizeInput($loginMethod)) ?></p>
                 <p style="margin-top: 4px;">Nikmati akses internet Anda!</p>
             </div>
+
+            <!-- Logout Button -->
+            <div style="margin-top: 24px;">
+                <a href="logout.php" class="login-btn login-btn--logout">
+                    <div class="login-btn-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="var(--accent-rose)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                            <polyline points="16 17 21 12 16 7"></polyline>
+                            <line x1="21" y1="12" x2="9" y2="12"></line>
+                        </svg>
+                    </div>
+                    <div class="login-btn-text" style="align-items: flex-start; text-align: left;">
+                        <span style="color: var(--accent-rose);">Logout</span>
+                        <span>Putuskan koneksi internet</span>
+                    </div>
+                </a>
+            </div>
         </div>
 
         <!-- Footer -->
